@@ -1,0 +1,333 @@
+<!DOCTYPE html>
+<html lang="he" dir="rtl">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>רשימת קניות</title>
+  <style>
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+    body {
+      font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Arial, sans-serif;
+      background: #f5f5f3;
+      color: #1a1a1a;
+      min-height: 100dvh;
+    }
+
+    .app { max-width: 480px; margin: 0 auto; padding: 0 0 6rem; }
+
+    /* Header */
+    .header {
+      position: sticky; top: 0; z-index: 10;
+      background: #fff;
+      border-bottom: 1px solid #e5e5e2;
+      padding: 1rem 1.25rem 0.75rem;
+    }
+    .header-top {
+      display: flex; align-items: center;
+      justify-content: space-between; margin-bottom: 0.6rem;
+    }
+    .header h1 { font-size: 20px; font-weight: 600; display: flex; align-items: center; gap: 8px; }
+    .progress-label { font-size: 13px; color: #888; font-variant-numeric: tabular-nums; }
+    .progress-track { height: 5px; background: #e5e5e2; border-radius: 3px; overflow: hidden; }
+    .progress-fill { height: 100%; background: #1d9e75; border-radius: 3px; transition: width 0.35s ease; width: 0%; }
+
+    /* Sync status */
+    .sync-bar {
+      display: flex; align-items: center; gap: 6px;
+      font-size: 12px; color: #aaa;
+      padding: 0.4rem 1.25rem 0;
+    }
+    .sync-dot {
+      width: 7px; height: 7px; border-radius: 50%;
+      background: #ccc; flex-shrink: 0;
+      transition: background 0.3s;
+    }
+    .sync-dot.connected { background: #1d9e75; }
+    .sync-dot.error { background: #e24b4a; }
+
+    /* Done banner */
+    .done-banner {
+      display: none;
+      margin: 1rem 1.25rem 0;
+      padding: 10px 14px;
+      background: #e1f5ee; color: #085041;
+      border-radius: 10px; font-size: 14px; text-align: center;
+    }
+
+    /* Loading */
+    .loading {
+      text-align: center; padding: 3rem 1rem;
+      color: #bbb; font-size: 15px;
+    }
+    .spinner {
+      width: 28px; height: 28px;
+      border: 3px solid #e5e5e2;
+      border-top-color: #1d9e75;
+      border-radius: 50%;
+      animation: spin 0.8s linear infinite;
+      margin: 0 auto 1rem;
+    }
+    @keyframes spin { to { transform: rotate(360deg); } }
+
+    /* Category */
+    .category { margin-top: 1.25rem; padding: 0 1.25rem; }
+    .cat-label {
+      font-size: 11px; font-weight: 600;
+      letter-spacing: 0.07em; color: #aaa;
+      text-transform: uppercase; margin-bottom: 8px;
+    }
+
+    /* Item */
+    .item {
+      display: flex; align-items: center; gap: 12px;
+      padding: 11px 13px;
+      background: #fff;
+      border: 1px solid #e8e8e5;
+      border-radius: 10px; margin-bottom: 6px;
+      cursor: pointer;
+      transition: background 0.12s, opacity 0.2s;
+      -webkit-tap-highlight-color: transparent;
+    }
+    .item:active { background: #f0f0ee; }
+    .item.done { opacity: 0.45; }
+    .item.done .item-name { text-decoration: line-through; color: #999; }
+
+    .cb {
+      width: 24px; height: 24px; border-radius: 50%;
+      border: 2px solid #ccc;
+      display: flex; align-items: center; justify-content: center;
+      flex-shrink: 0; transition: background 0.15s, border-color 0.15s;
+    }
+    .item.done .cb { background: #1d9e75; border-color: #1d9e75; }
+    .cb svg { display: none; width: 13px; height: 13px; stroke: #fff; stroke-width: 2.5; fill: none; stroke-linecap: round; stroke-linejoin: round; }
+    .item.done .cb svg { display: block; }
+
+    .item-name { flex: 1; font-size: 15px; }
+    .item-qty { font-size: 13px; color: #999; flex-shrink: 0; }
+    .item-del {
+      background: none; border: none; cursor: pointer;
+      color: #ccc; font-size: 20px; line-height: 1;
+      padding: 2px 4px; border-radius: 4px;
+    }
+    .item-del:hover { color: #e24b4a; background: #fdf0f0; }
+
+    /* Add / bottom bar */
+    .add-section {
+      position: fixed; bottom: 0; right: 0; left: 0;
+      background: #fff; border-top: 1px solid #e5e5e2;
+      padding: 0.75rem 1.25rem;
+      display: flex; gap: 8px;
+      max-width: 480px; margin: 0 auto;
+    }
+    .add-section input {
+      flex: 1; padding: 10px 13px;
+      border: 1px solid #ddd; border-radius: 10px;
+      font-size: 15px; background: #f8f8f6; color: #1a1a1a; outline: none;
+    }
+    .add-section input:focus { border-color: #1d9e75; background: #fff; }
+    .btn-add {
+      padding: 10px 16px; background: #1d9e75; color: #fff;
+      border: none; border-radius: 10px; font-size: 22px;
+      cursor: pointer; line-height: 1; transition: background 0.15s;
+    }
+    .btn-add:hover { background: #178f69; }
+    .btn-reset {
+      padding: 10px 14px; background: none;
+      border: 1px solid #ddd; border-radius: 10px;
+      font-size: 13px; color: #888; cursor: pointer; white-space: nowrap;
+    }
+    .btn-reset:hover { background: #f5f5f3; }
+
+    .empty { text-align: center; padding: 3rem 1rem; color: #bbb; font-size: 15px; }
+  </style>
+</head>
+<body>
+<div class="app">
+
+  <header class="header">
+    <div class="header-top">
+      <h1>🛒 רשימת קניות</h1>
+      <span class="progress-label" id="prog-label">0 / 0</span>
+    </div>
+    <div class="progress-track">
+      <div class="progress-fill" id="prog-fill"></div>
+    </div>
+  </header>
+
+  <div class="sync-bar">
+    <div class="sync-dot" id="sync-dot"></div>
+    <span id="sync-label">מתחבר...</span>
+  </div>
+
+  <div class="done-banner" id="done-banner">🎉 כל המוצרים נאספו! קנייה מוצלחת!</div>
+
+  <main id="list-root">
+    <div class="loading">
+      <div class="spinner"></div>
+      טוען רשימה...
+    </div>
+  </main>
+
+</div>
+
+<div class="add-section">
+  <input type="text" id="new-item-input" placeholder="הוסף מוצר..." autocomplete="off" />
+  <button class="btn-add" id="btn-add">+</button>
+  <button class="btn-reset" id="btn-reset">אפס</button>
+</div>
+
+<!-- Firebase -->
+<script type="module">
+  import { initializeApp } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-app.js";
+  import { getDatabase, ref, onValue, set, update, remove, get }
+    from "https://www.gstatic.com/firebasejs/10.12.0/firebase-database.js";
+
+  const firebaseConfig = {
+    apiKey: "AIzaSyBIkJqv-zxchVNIBKJ9ofMdxlbn8sMz3Do",
+    authDomain: "grocery-list-a7281.firebaseapp.com",
+    databaseURL: "https://grocery-list-a7281-default-rtdb.firebaseio.com",
+    projectId: "grocery-list-a7281",
+    storageBucket: "grocery-list-a7281.firebasestorage.app",
+    messagingSenderId: "843518553895",
+    appId: "1:843518553895:web:776c1b03d336682f414302"
+  };
+
+  const DEFAULT_ITEMS = [
+    { id: "item1",  name: "נייר טואלט",        qty: "",    cat: "ניקיון ונייר", done: false },
+    { id: "item2",  name: "מלפפונים",          qty: "× 6", cat: "ירקות ופירות", done: false },
+    { id: "item3",  name: "פלפל אדום",         qty: "× 3", cat: "ירקות ופירות", done: false },
+    { id: "item4",  name: "פלפל כתום / צהוב", qty: "× 3", cat: "ירקות ופירות", done: false },
+    { id: "item5",  name: "עגבניות",           qty: "× 3", cat: "ירקות ופירות", done: false },
+    { id: "item6",  name: "נקטרינות",          qty: "× 2", cat: "ירקות ופירות", done: false },
+    { id: "item7",  name: "בננות",             qty: "× 4", cat: "ירקות ופירות", done: false },
+    { id: "item8",  name: "יוגורט פרו תות",   qty: "× 4", cat: "מוצרי חלב",   done: false },
+  ];
+
+  const app = initializeApp(firebaseConfig);
+  const db  = getDatabase(app);
+  const itemsRef = ref(db, "grocery/items");
+
+  const syncDot   = document.getElementById("sync-dot");
+  const syncLabel = document.getElementById("sync-label");
+
+  function setConnected(ok) {
+    syncDot.className = "sync-dot " + (ok ? "connected" : "error");
+    syncLabel.textContent = ok ? "מסונכרן" : "בעיית חיבור";
+  }
+
+  /* Seed default items if DB is empty */
+  get(itemsRef).then(snap => {
+    if (!snap.exists()) {
+      const seed = {};
+      DEFAULT_ITEMS.forEach(it => { seed[it.id] = it; });
+      set(itemsRef, seed);
+    }
+  });
+
+  /* Listen for real-time changes */
+  onValue(itemsRef, snap => {
+    setConnected(true);
+    const data = snap.val() || {};
+    const items = Object.values(data);
+    render(items);
+  }, () => setConnected(false));
+
+  /* Render */
+  function render(items) {
+    const total = items.length;
+    const doneCount = items.filter(i => i.done).length;
+
+    document.getElementById("prog-label").textContent = doneCount + " / " + total;
+    const pct = total ? Math.round(doneCount / total * 100) : 0;
+    document.getElementById("prog-fill").style.width = pct + "%";
+    document.getElementById("done-banner").style.display =
+      (total > 0 && doneCount === total) ? "block" : "none";
+
+    const root = document.getElementById("list-root");
+    root.innerHTML = "";
+
+    if (total === 0) {
+      root.innerHTML = '<div class="empty">הרשימה ריקה — הוסף מוצרים למטה</div>';
+      return;
+    }
+
+    /* Sort: undone first, then by category */
+    const cats = {};
+    items
+      .sort((a,b) => (a.done === b.done ? 0 : a.done ? 1 : -1))
+      .forEach(it => {
+        if (!cats[it.cat]) cats[it.cat] = [];
+        cats[it.cat].push(it);
+      });
+
+    Object.entries(cats).forEach(([cat, catItems]) => {
+      const sec = document.createElement("section");
+      sec.className = "category";
+      const label = document.createElement("div");
+      label.className = "cat-label";
+      label.textContent = cat;
+      sec.appendChild(label);
+
+      catItems.forEach(it => {
+        const div = document.createElement("div");
+        div.className = "item" + (it.done ? " done" : "");
+        div.setAttribute("role", "checkbox");
+        div.setAttribute("aria-checked", String(it.done));
+        div.setAttribute("tabindex", "0");
+        div.innerHTML =
+          '<div class="cb"><svg viewBox="0 0 14 12"><polyline points="1,6 5,10 13,1"/></svg></div>' +
+          '<span class="item-name">' + esc(it.name) + '</span>' +
+          '<span class="item-qty">'  + esc(it.qty)  + '</span>' +
+          '<button class="item-del" aria-label="מחק" title="מחק">×</button>';
+
+        div.querySelector(".item-del").addEventListener("click", e => {
+          e.stopPropagation();
+          remove(ref(db, "grocery/items/" + it.id));
+        });
+
+        const toggle = () => update(ref(db, "grocery/items/" + it.id), { done: !it.done });
+        div.addEventListener("click", toggle);
+        div.addEventListener("keydown", e => {
+          if (e.key === " " || e.key === "Enter") { e.preventDefault(); toggle(); }
+        });
+
+        sec.appendChild(div);
+      });
+      root.appendChild(sec);
+    });
+  }
+
+  /* Add item */
+  function addItem() {
+    const inp = document.getElementById("new-item-input");
+    const val = inp.value.trim();
+    if (!val) return;
+    const id = "item_" + Date.now();
+    set(ref(db, "grocery/items/" + id), { id, name: val, qty: "", cat: "שונות", done: false });
+    inp.value = "";
+    inp.focus();
+  }
+
+  document.getElementById("btn-add").addEventListener("click", addItem);
+  document.getElementById("new-item-input").addEventListener("keydown", e => {
+    if (e.key === "Enter") addItem();
+  });
+
+  /* Reset */
+  document.getElementById("btn-reset").addEventListener("click", () => {
+    if (!confirm("לאפס את כל הסימונים?")) return;
+    get(itemsRef).then(snap => {
+      if (!snap.exists()) return;
+      const updates = {};
+      Object.keys(snap.val()).forEach(k => { updates[k + "/done"] = false; });
+      update(itemsRef, updates);
+    });
+  });
+
+  function esc(s) {
+    return String(s||"").replace(/&/g,"&amp;").replace(/</g,"&lt;").replace(/>/g,"&gt;");
+  }
+</script>
+</body>
+</html>
