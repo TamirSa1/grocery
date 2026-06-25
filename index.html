@@ -64,6 +64,10 @@
 
     .ai-hint { font-size: 12px; color: #1d9e75; padding: 3px 0 1px; min-height: 18px; }
     .empty { text-align: center; padding: 3rem 1rem; color: #bbb; font-size: 15px; }
+
+    /* toast */
+    .toast { position: fixed; top: 80px; left: 50%; transform: translateX(-50%) translateY(-10px); background: #333; color: #fff; padding: 8px 16px; border-radius: 20px; font-size: 13px; opacity: 0; transition: opacity 0.2s, transform 0.2s; pointer-events: none; z-index: 100; white-space: nowrap; }
+    .toast.show { opacity: 1; transform: translateX(-50%) translateY(0); }
   </style>
 </head>
 <body>
@@ -97,6 +101,8 @@
   <div class="ai-hint" id="ai-hint"></div>
 </div>
 
+<div class="toast" id="toast"></div>
+
 <script type="module">
   import { initializeApp } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-app.js";
   import { getDatabase, ref, onValue, set, update, remove, get }
@@ -113,37 +119,124 @@
   };
 
   const DEFAULT_ITEMS = [
-    { id: "item1", name: "נייר טואלט",       qty: 1, cat: "ניקיון ונייר",  done: false },
-    { id: "item2", name: "מלפפונים",          qty: 6, cat: "ירקות ופירות", done: false },
-    { id: "item3", name: "פלפל אדום",         qty: 3, cat: "ירקות ופירות", done: false },
-    { id: "item4", name: "פלפל כתום / צהוב", qty: 3, cat: "ירקות ופירות", done: false },
-    { id: "item5", name: "עגבניות",           qty: 3, cat: "ירקות ופירות", done: false },
-    { id: "item6", name: "נקטרינות",          qty: 2, cat: "ירקות ופירות", done: false },
-    { id: "item7", name: "בננות",             qty: 4, cat: "ירקות ופירות", done: false },
+    { id: "item1", name: "נייר טואלט",       qty: 1, cat: "ניקיון הבית",  done: false },
+    { id: "item2", name: "מלפפונים",          qty: 6, cat: "פירות וירקות", done: false },
+    { id: "item3", name: "פלפל אדום",         qty: 3, cat: "פירות וירקות", done: false },
+    { id: "item4", name: "פלפל כתום / צהוב", qty: 3, cat: "פירות וירקות", done: false },
+    { id: "item5", name: "עגבניות",           qty: 3, cat: "פירות וירקות", done: false },
+    { id: "item6", name: "נקטרינות",          qty: 2, cat: "פירות וירקות", done: false },
+    { id: "item7", name: "בננות",             qty: 4, cat: "פירות וירקות", done: false },
     { id: "item8", name: "יוגורט פרו תות",   qty: 4, cat: "מוצרי חלב",   done: false },
   ];
 
-  // ── Smart category dictionary ──
+  // ── Category dictionary (ordered = supermarket aisle order) ──
   const CAT_RULES = [
-    { cat: "ירקות ופירות", keywords: ["תפוח","תפוז","בננ","ענב","אגס","מנגו","אבטיח","מלון","תות","אפרסק","נקטרין","שזיף","דובדבן","לימון","אשכולית","פומלה","קיווי","אנונה","רימון","תמר","ליים","פפאיה","פסיפלורה","אננס","קוקוס","צימוקים","פרי","ירק","עגבני","מלפפון","פלפל","חסה","גזר","בצל","שום","תפוח אדמה","בטטה","קישוא","חציל","ברוקולי","כרובית","כרוב","תירס","שעועית ירוקה","אפונה","סלרי","פטרוזיליה","כוסברה","נענע","בזיליקום","רוקט","תרד","מנגולד","כרישה","פטריה","עמבה","אבוקדו","ארטישוק","אספרגוס","ביטשוי","חמוציות","פינהאפל"] },
-    { cat: "מוצרי חלב",   keywords: ["חלב","יוגורט","גבינ","קוטג","שמנת","חמאה","מרגרינ","לבן","ביצ","קפיר","ריקוטה","מוצרלה","פרמזן","צהובה","בולגרית","פטה","עמק","תנובה","שטראוס"] },
-    { cat: "בשר ודגים",   keywords: ["עוף","בשר","טחון","סטייק","כבש","הודו","ברווז","אווז","חזיר","נקניק","שניצל","קבב","כבד","לב","חזה","ירך","כנף","פרגית","דג","סלמון","טונה","מוסר","דניס","בורי","קרפיון","שרימפס","קלמרי","סרדין","אנשובי","ממרח דג"] },
-    { cat: "מאפים ולחם",  keywords: ["לחם","פיתה","בגט","חלה","לחמניה","קרואסון","עוגה","עוגיה","בישקוט","קרקר","מצה","טוסט","פוקצ'ה","ג'חנון","מלאווח","בורקס","קיש","שטרודל","רוגלך","מאפה"] },
-    { cat: "קפואים",      keywords: ["קפוא","גלידה","ארטיק","שורבה","פיצה קפואה","ירק קפוא","אפונה קפואה","תירס קפוא","שניצל קפוא","פרי קפוא","עוגה קפואה"] },
-    { cat: "שימורים ויבשים", keywords: ["שימור","טונה פחית","עגבניות מרוסקות","חומוס","טחינה","ממרח","ריבה","דבש","סילאן","שמן","חומץ","רוטב","פסטה","אורז","קוסקוס","בורגול","עדשה","חיטה","שיבולת שועל","גרנולה","דגני בוקר","קמח","סוכר","מלח","פלפל שחור","כמון","כורכום","פפריקה","קינמון","אניס","ציפורן","עלי דפנה","אגוז מוסקט","זרעי כוסברה","אבקת שום","אבקת בצל","מרק","אבקת מרק","רסק עגבניות","שעועית","גרגרי חומוס","עמידה","תבלין","אגוז","שקד","פיסטוק","קשיו","בוטן","אגוזי מלך","צנובר","שומשום","דלעת זרע","חמניה זרע","פשתן"] },
-    { cat: "משקאות",      keywords: ["מים","מיץ","קולה","פאנטה","ספרייט","סודה","גזוז","בירה","יין","וודקה","ויסקי","קפה","תה","קקאו","מילקשייק","שוקו","מיץ תפוזים","מיץ ענבים","משקה","אנרג'י","רד בול","נספרסו"] },
-    { cat: "ניקיון ונייר", keywords: ["נייר טואלט","מגבת נייר","טישו","מפית","ניקוי","סבון","שמפו","אקונומיקה","פיירי","ג'אוול","ג'ל כלים","אבקת כביסה","רכך","נוזל כביסה","מטרוגן","ממיס","חומר ניקוי","סמרטוט","מגב","מטאטא","שק זבל","שקית זבל","אלומיניום","נייר אפייה","ניילון נצמד","כפפות","ספוג","מברשת שיניים","משחת שיניים","חוט דנטלי","דאודורנט","קרם"] },
-    { cat: "טיפוח ובריאות", keywords: ["קרם פנים","קרם גוף","לוציון","אפטר שייב","תער","ג'ל שיניים","מי פה","שמפו","מרכך שיער","מסכת פנים","ויטמין","תוסף","אספירין","אקמול","נורופן","אנטיביוטיקה","תחבושת","פלסטר","כדור","סירופ","טיפות","מד חום","קונדום","טמפון","פד"] },
+    { cat: "פירות וירקות", keywords: [
+      "תפוח","תפוז","בננה","ענבים","ענב","אגס","מנגו","אבטיח","מלון","תות",
+      "אפרסק","נקטרינה","שזיף","דובדבן","לימון","אשכולית","פומלה","קיווי",
+      "אנונה","רימון","תמר","ליים","פפאיה","פסיפלורה","אננס","קוקוס",
+      "צימוקים","פרי יבש","פירות יבשים","חמוציות","משמש",
+      "עגבניה","עגבניות","מלפפון","פלפל","חסה","גזר","בצל","שום",
+      "תפוח אדמה","בטטה","קישוא","זוקיני","חציל","ברוקולי","כרובית","כרוב",
+      "תירס","שעועית ירוקה","אפונה ירוקה","סלרי","פטרוזיליה","כוסברה",
+      "נענע","בזיליקום","רוקט","תרד","מנגולד","כרישה","פטריה","פטריות",
+      "אבוקדו","ארטישוק","אספרגוס","צנון","צנונית","לפת","קולרבי",
+      "שמיר","עירית","דלעת","דלורית","ג'ינג'ר","כורכום טרי","לוף"
+    ]},
+    { cat: "מוצרי חלב", keywords: [
+      "חלב","יוגורט","גבינה","גבינת","קוטג'","קוטג","שמנת","חמאה",
+      "מרגרינה","אשל","קפיר","ריקוטה","מוצרלה","פרמזן",
+      "גבינה צהובה","עמק","גלבוע","בולגרית","פטה","גאודה","צ'דר","ברי","קממבר",
+      "מסקרפונה","לאבנה","דנונה","תנובה","שטראוס","יטבתה","טרה","מילקי","מעדן"
+    ]},
+    { cat: "ביצים", keywords: [
+      "ביצה","ביצים","תבנית ביצים","ביצי חופש","ביצים אורגניות"
+    ]},
+    { cat: "בשר, עוף ודגים", keywords: [
+      "עוף","חזה עוף","ירך עוף","כנפיים","שוקיים","פרגית","קורקבנים","כבד עוף",
+      "בשר","בקר","בשר טחון","סטייק","אנטריקוט","פילה","צלעות","קבב","המבורגר",
+      "כבש","טלה","אסאדו","שפונדרה","צלי","גולש",
+      "נקניק","נקניקיה","נקניקיות","סלמי","פסטרמה","קורנביף",
+      "דג","סלמון","טונה טרייה","מוסר","דניס","בורי","קרפיון","לברק",
+      "שרימפס","קלמרי","הליבוט","בקלה","פורל","ברמונדי","אמנון","פילה דג"
+    ]},
+    { cat: "לחם ומאפים", keywords: [
+      "לחם","פיתה","פיתות","בגט","חלה","לחמניה","לחמניות","עוגה","עוגיות",
+      "קרקר","מצה","מצות","טוסט","פוקצ'ה","ג'חנון","מלאווח","בורקס",
+      "קיש","שטרודל","רוגלך","מאפה","בייגלה","לאפה","דונאטס",
+      "מאפינס","בראוניז","פנקייק","פירורי לחם"
+    ]},
+    { cat: "קפואים", keywords: [
+      "גלידה","ארטיק","קרטיב","סורבה","פיצה קפואה",
+      "אפונה קפואה","תירס קפוא","שניצל קפוא","ירקות קפואים","צ'יפס קפוא",
+      "בצק עלים קפוא","אדממה","דג קפוא","פירות ים קפואים","קפוא","קפואים"
+    ]},
+    { cat: "מוצרי יסוד ושימורים", keywords: [
+      "פחית טונה","טונה","עגבניות מרוסקות","רסק עגבניות",
+      "תירס בשימורים","זיתים","חמוצים","מלפפונים חמוצים","טחינה","חומוס",
+      "ריבה","דבש","סילאן","מייפל","חרדל","מיונז","קטשופ","חמאת בוטנים",
+      "שמן זית","שמן קנולה","שמן חמניות","שמן קוקוס","חומץ","בלסמי",
+      "רוטב פסטה","רוטב עגבניות","רוטב סויה","טריאקי",
+      "פסטה","ספגטי","מקרוני","פנה","פתיתים","נודלס","אורז","קוסקוס","בורגול",
+      "עדשים","חיטה","כוסמת","קינואה","שיבולת שועל","שעועית יבשה","גרגירי חומוס",
+      "קמח","סוכר","מלח","שמרים","אבקת אפייה","סודה לשתייה","קקאו","שוקולד מריר",
+      "פלפל שחור","כמון","פפריקה","קינמון","כורכום","זעתר","אבקת מרק","תבלין",
+      "קורנפלקס","גרנולה","דגני בוקר","מוזלי",
+      "אגוזים","שקדים","פיסטוק","קשיו","בוטנים","גרעינים","צנובר","שומשום","שימורים"
+    ]},
+    { cat: "חטיפים וממתקים", keywords: [
+      "במבה","ביסלי","תפוצ'יפס","צ'יפס","דוריטוס","אפרופו","חטיף","פופקורן",
+      "שוקולד","סוכריות","מסטיק","מרשמלו","וופלים","ממתק","קרמבו","בר שוקולד","פראלינה"
+    ]},
+    { cat: "משקאות", keywords: [
+      "מים מינרליים","שישיית מים","מיץ","קולה","פאנטה","ספרייט","סודה","גזוז","בירה",
+      "יין","שמפניה","קאווה","וודקה","ויסקי","ברנדי","רום","טקילה","עראק",
+      "קפה","נס קפה","תה","תיונים","שוקו","תרכיז","משקה אנרגיה","רד בול",
+      "קפסולות קפה","חלב שקדים","חלב שיבולת שועל","חלב סויה","משקה"
+    ]},
+    { cat: "ניקיון הבית", keywords: [
+      "נייר טואלט","מגבות נייר","נייר סופג","טישו","מפיות","נייר אפייה","ניילון נצמד",
+      "שקיות זבל","נייר כסף","רדיד אלומיניום","חד פעמי","כוסות חד פעמי","צלחות חד פעמי",
+      "סבון כלים","נוזל כלים","אקונומיקה","מסיר שומנים","טבליות מדיח","נוזל רצפות",
+      "אבקת כביסה","נוזל כביסה","מרכך כביסה","קפסולות כביסה","מסיר כתמים",
+      "חומר הדברה","מנקה חלונות","וינדקס","מגב","סמרטוט","מטאטא",
+      "ספוג","כפפות","מברשת אסלה","סבון","ניקוי"
+    ]},
+    { cat: "פארם וטואלטיקה", keywords: [
+      "סבון גוף","תחליב רחצה","סבון ידיים","שמפו","מרכך שיער","דאודורנט",
+      "מברשת שיניים","משחת שיניים","חוט דנטלי","מי פה","תחבושות היגייניות","טמפונים",
+      "קרם פנים","קרם גוף","קרם ידיים","סרום","אפטר שייב","קצף גילוח","סכין גילוח",
+      "מסיר איפור","קונסילר","שפתון","אודם","מסקרה","לק ציפורניים","מסיר לק","בושם","קרם הגנה",
+      "ויטמינים","אומגה","מגנזיום","פרוביוטיקה","אקמול","נורופן","אדוויל",
+      "פלסטרים","תחבושת","מד חום","קונדומים","חיתולים","מגבונים"
+    ]}
   ];
 
-  function detectCategory(name) {
-    const lower = name.toLowerCase();
+  // סדר הקטגוריות לפי מיקום פיזי בסופר + שונות תמיד בסוף
+  const ORDERED_CATS = [...CAT_RULES.map(r => r.cat), "שונות"];
+
+  // ── Scoring categorizer ──
+  function detectCategory(itemName) {
+    const clean = itemName.trim();
+    let best = { cat: "שונות", score: 0 };
     for (const rule of CAT_RULES) {
       for (const kw of rule.keywords) {
-        if (lower.includes(kw.toLowerCase())) return rule.cat;
+        if (clean === kw) return rule.cat;
+        if (clean.includes(kw)) {
+          const score = kw.length;
+          if (score > best.score) best = { cat: rule.cat, score };
+        }
       }
     }
-    return "שונות";
+    return best.cat;
+  }
+
+  // ── Toast ──
+  function showToast(msg) {
+    const t = document.getElementById("toast");
+    t.textContent = msg;
+    t.classList.add("show");
+    setTimeout(() => t.classList.remove("show"), 2500);
   }
 
   const fbApp = initializeApp(firebaseConfig);
@@ -165,11 +258,15 @@
     }
   });
 
+  // שמירת snapshot נוכחי לבדיקת כפילויות
+  let currentItems = [];
   onValue(itemsRef, snap => {
     setConnected(true);
-    render(Object.values(snap.val() || {}));
+    currentItems = Object.values(snap.val() || {});
+    render(currentItems);
   }, () => setConnected(false));
 
+  // ── Render ──
   function render(items) {
     const total = items.length;
     const doneCount = items.filter(i => i.done).length;
@@ -181,11 +278,21 @@
     root.innerHTML = "";
     if (total === 0) { root.innerHTML = '<div class="empty">הרשימה ריקה — הוסף מוצרים למטה</div>'; return; }
 
+    // קיבוץ לפי קטגוריה
     const cats = {};
     items.sort((a,b) => a.done === b.done ? 0 : a.done ? 1 : -1)
          .forEach(it => { if (!cats[it.cat]) cats[it.cat]=[]; cats[it.cat].push(it); });
 
-    Object.entries(cats).forEach(([cat, catItems]) => {
+    // מיון קטגוריות לפי סדר הסופר, שונות תמיד בסוף
+    const sortedCatKeys = Object.keys(cats)
+      .sort((a, b) => {
+        const ai = ORDERED_CATS.indexOf(a);
+        const bi = ORDERED_CATS.indexOf(b);
+        return (ai === -1 ? 999 : ai) - (bi === -1 ? 999 : bi);
+      });
+
+    sortedCatKeys.forEach(cat => {
+      const catItems = cats[cat];
       const sec = document.createElement("section");
       sec.className = "category";
       sec.innerHTML = '<div class="cat-label">' + esc(cat) + '</div>';
@@ -194,7 +301,6 @@
         const div = document.createElement("div");
         div.className = "item" + (it.done ? " done" : "");
         const qty = Number(it.qty) || 1;
-
         div.innerHTML =
           '<div class="cb"><svg viewBox="0 0 14 12"><polyline points="1,6 5,10 13,1"/></svg></div>' +
           '<span class="item-name">' + esc(it.name) + '</span>' +
@@ -212,8 +318,7 @@
         div.querySelectorAll(".qty-btn").forEach(btn => {
           btn.addEventListener("click", e => {
             e.stopPropagation();
-            const delta = btn.dataset.action === "plus" ? 1 : -1;
-            update(ref(db, "grocery/items/" + it.id), { qty: Math.max(1, qty + delta) });
+            update(ref(db, "grocery/items/" + it.id), { qty: Math.max(1, qty + (btn.dataset.action === "plus" ? 1 : -1)) });
           });
         });
 
@@ -232,11 +337,11 @@
   let addQty = 1;
   const addQtyNum = document.getElementById("add-qty-num");
   const aiHint = document.getElementById("ai-hint");
+  let detectedCat = "שונות";
 
   document.getElementById("add-qty-minus").addEventListener("click", () => { addQty = Math.max(1, addQty-1); addQtyNum.textContent = addQty; });
   document.getElementById("add-qty-plus").addEventListener("click",  () => { addQty++; addQtyNum.textContent = addQty; });
 
-  let detectedCat = "שונות";
   document.getElementById("new-item-input").addEventListener("input", e => {
     const val = e.target.value.trim();
     if (val.length < 2) { aiHint.textContent = ""; detectedCat = "שונות"; return; }
@@ -249,10 +354,24 @@
     const val = inp.value.trim();
     if (!val) return;
     if (detectedCat === "שונות") detectedCat = detectCategory(val);
-    const id = "item_" + Date.now();
-    set(ref(db, "grocery/items/" + id), { id, name: val, qty: addQty, cat: detectedCat, done: false });
-    inp.value = ""; addQty = 1; addQtyNum.textContent = "1"; aiHint.textContent = ""; detectedCat = "שונות";
-    inp.focus();
+
+    // בדיקת כפילות — אם המוצר כבר קיים, פשוט מחברים כמות
+    const existing = currentItems.find(it => it.name.trim() === val);
+    if (existing) {
+      const newQty = (Number(existing.qty) || 1) + addQty;
+      update(ref(db, "grocery/items/" + existing.id), { qty: newQty, done: false });
+      showToast("✓ עדכון כמות: " + val + " → " + newQty);
+    } else {
+      const id = "item_" + Date.now();
+      set(ref(db, "grocery/items/" + id), { id, name: val, qty: addQty, cat: detectedCat, done: false });
+    }
+
+    inp.value = "";
+    addQty = 1;
+    addQtyNum.textContent = "1";
+    aiHint.textContent = "";
+    detectedCat = "שונות";
+    // לא מחזירים focus — נוח יותר בטלפון
   }
 
   document.getElementById("btn-add").addEventListener("click", addItem);
