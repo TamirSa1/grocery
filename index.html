@@ -9,7 +9,6 @@
     body { font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Arial, sans-serif; background: #f5f5f3; color: #1a1a1a; min-height: 100dvh; }
     .app { max-width: 480px; margin: 0 auto; padding: 0 0 7rem; }
 
-    /* Header */
     .header { position: sticky; top: 0; z-index: 10; background: #fff; border-bottom: 1px solid #e5e5e2; padding: 1rem 1.25rem 0.75rem; }
     .header-top { display: flex; align-items: center; justify-content: space-between; margin-bottom: 0.6rem; }
     .header h1 { font-size: 20px; font-weight: 600; display: flex; align-items: center; gap: 8px; }
@@ -17,25 +16,20 @@
     .progress-track { height: 5px; background: #e5e5e2; border-radius: 3px; overflow: hidden; }
     .progress-fill { height: 100%; background: #1d9e75; border-radius: 3px; transition: width 0.35s ease; width: 0%; }
 
-    /* Sync */
     .sync-bar { display: flex; align-items: center; gap: 6px; font-size: 12px; color: #aaa; padding: 0.4rem 1.25rem 0; }
     .sync-dot { width: 7px; height: 7px; border-radius: 50%; background: #ccc; flex-shrink: 0; transition: background 0.3s; }
     .sync-dot.connected { background: #1d9e75; }
     .sync-dot.error { background: #e24b4a; }
 
-    /* Done banner */
     .done-banner { display: none; margin: 1rem 1.25rem 0; padding: 10px 14px; background: #e1f5ee; color: #085041; border-radius: 10px; font-size: 14px; text-align: center; }
 
-    /* Loading */
     .loading { text-align: center; padding: 3rem 1rem; color: #bbb; font-size: 15px; }
     .spinner { width: 28px; height: 28px; border: 3px solid #e5e5e2; border-top-color: #1d9e75; border-radius: 50%; animation: spin 0.8s linear infinite; margin: 0 auto 1rem; }
     @keyframes spin { to { transform: rotate(360deg); } }
 
-    /* Category */
     .category { margin-top: 1.25rem; padding: 0 1.25rem; }
     .cat-label { font-size: 11px; font-weight: 600; letter-spacing: 0.07em; color: #aaa; text-transform: uppercase; margin-bottom: 8px; }
 
-    /* Item */
     .item { display: flex; align-items: center; gap: 10px; padding: 10px 13px; background: #fff; border: 1px solid #e8e8e5; border-radius: 10px; margin-bottom: 6px; -webkit-tap-highlight-color: transparent; }
     .item.done { opacity: 0.45; }
     .item.done .item-name { text-decoration: line-through; color: #999; }
@@ -47,19 +41,17 @@
 
     .item-name { flex: 1; font-size: 15px; cursor: pointer; }
 
-    /* Qty controls */
     .qty-controls { display: flex; align-items: center; gap: 6px; flex-shrink: 0; }
-    .qty-btn { width: 28px; height: 28px; border-radius: 50%; border: 1.5px solid #ddd; background: #f5f5f3; font-size: 18px; line-height: 1; cursor: pointer; display: flex; align-items: center; justify-content: center; color: #555; transition: background 0.12s; flex-shrink: 0; }
+    .qty-btn { width: 28px; height: 28px; border-radius: 50%; border: 1.5px solid #ddd; background: #f5f5f3; font-size: 18px; line-height: 1; cursor: pointer; display: flex; align-items: center; justify-content: center; color: #555; transition: background 0.12s; }
     .qty-btn:hover { background: #e8e8e5; }
-    .qty-num { font-size: 15px; font-weight: 500; min-width: 20px; text-align: center; color: #1a1a1a; }
+    .qty-num { font-size: 15px; font-weight: 500; min-width: 20px; text-align: center; }
 
     .item-del { background: none; border: none; cursor: pointer; color: #ccc; font-size: 20px; line-height: 1; padding: 2px 4px; border-radius: 4px; flex-shrink: 0; }
     .item-del:hover { color: #e24b4a; background: #fdf0f0; }
 
-    /* Add panel */
     .add-section { position: fixed; bottom: 0; right: 0; left: 0; background: #fff; border-top: 1px solid #e5e5e2; padding: 0.6rem 1rem; max-width: 480px; margin: 0 auto; }
     .add-row { display: flex; gap: 8px; align-items: center; }
-    .add-name { flex: 1; padding: 10px 13px; border: 1px solid #ddd; border-radius: 10px; font-size: 15px; background: #f8f8f6; color: #1a1a1a; outline: none; }
+    .add-name { flex: 1; padding: 10px 13px; border: 1px solid #ddd; border-radius: 10px; font-size: 15px; background: #f8f8f6; color: #1a1a1a; outline: none; min-width: 0; }
     .add-name:focus { border-color: #1d9e75; background: #fff; }
     .add-qty-wrap { display: flex; align-items: center; gap: 5px; flex-shrink: 0; }
     .add-qty-btn { width: 30px; height: 30px; border-radius: 50%; border: 1.5px solid #ddd; background: #f5f5f3; font-size: 18px; cursor: pointer; display: flex; align-items: center; justify-content: center; color: #555; }
@@ -70,9 +62,7 @@
     .btn-reset { padding: 10px 12px; background: none; border: 1px solid #ddd; border-radius: 10px; font-size: 13px; color: #888; cursor: pointer; white-space: nowrap; }
     .btn-reset:hover { background: #f5f5f3; }
 
-    /* AI thinking */
-    .ai-hint { font-size: 12px; color: #1d9e75; padding: 2px 0 4px; min-height: 18px; }
-
+    .ai-hint { font-size: 12px; color: #1d9e75; padding: 3px 0 1px; min-height: 18px; }
     .empty { text-align: center; padding: 3rem 1rem; color: #bbb; font-size: 15px; }
   </style>
 </head>
@@ -85,12 +75,10 @@
     </div>
     <div class="progress-track"><div class="progress-fill" id="prog-fill"></div></div>
   </header>
-
   <div class="sync-bar">
     <div class="sync-dot" id="sync-dot"></div>
     <span id="sync-label">מתחבר...</span>
   </div>
-
   <div class="done-banner" id="done-banner">🎉 כל המוצרים נאספו! קנייה מוצלחת!</div>
   <main id="list-root"><div class="loading"><div class="spinner"></div>טוען רשימה...</div></main>
 </div>
@@ -125,17 +113,38 @@
   };
 
   const DEFAULT_ITEMS = [
-    { id: "item1", name: "נייר טואלט",        qty: 1, cat: "ניקיון ונייר" , done: false },
-    { id: "item2", name: "מלפפונים",           qty: 6, cat: "ירקות ופירות", done: false },
-    { id: "item3", name: "פלפל אדום",          qty: 3, cat: "ירקות ופירות", done: false },
-    { id: "item4", name: "פלפל כתום / צהוב",  qty: 3, cat: "ירקות ופירות", done: false },
-    { id: "item5", name: "עגבניות",            qty: 3, cat: "ירקות ופירות", done: false },
-    { id: "item6", name: "נקטרינות",           qty: 2, cat: "ירקות ופירות", done: false },
-    { id: "item7", name: "בננות",              qty: 4, cat: "ירקות ופירות", done: false },
-    { id: "item8", name: "יוגורט פרו תות",    qty: 4, cat: "מוצרי חלב",   done: false },
+    { id: "item1", name: "נייר טואלט",       qty: 1, cat: "ניקיון ונייר",  done: false },
+    { id: "item2", name: "מלפפונים",          qty: 6, cat: "ירקות ופירות", done: false },
+    { id: "item3", name: "פלפל אדום",         qty: 3, cat: "ירקות ופירות", done: false },
+    { id: "item4", name: "פלפל כתום / צהוב", qty: 3, cat: "ירקות ופירות", done: false },
+    { id: "item5", name: "עגבניות",           qty: 3, cat: "ירקות ופירות", done: false },
+    { id: "item6", name: "נקטרינות",          qty: 2, cat: "ירקות ופירות", done: false },
+    { id: "item7", name: "בננות",             qty: 4, cat: "ירקות ופירות", done: false },
+    { id: "item8", name: "יוגורט פרו תות",   qty: 4, cat: "מוצרי חלב",   done: false },
   ];
 
-  const CATEGORIES = ["ירקות ופירות","מוצרי חלב","בשר ודגים","מאפים ולחם","קפואים","שימורים ויבשים","משקאות","ניקיון ונייר","טיפוח ובריאות","שונות"];
+  // ── Smart category dictionary ──
+  const CAT_RULES = [
+    { cat: "ירקות ופירות", keywords: ["תפוח","תפוז","בננ","ענב","אגס","מנגו","אבטיח","מלון","תות","אפרסק","נקטרין","שזיף","דובדבן","לימון","אשכולית","פומלה","קיווי","אנונה","רימון","תמר","ליים","פפאיה","פסיפלורה","אננס","קוקוס","צימוקים","פרי","ירק","עגבני","מלפפון","פלפל","חסה","גזר","בצל","שום","תפוח אדמה","בטטה","קישוא","חציל","ברוקולי","כרובית","כרוב","תירס","שעועית ירוקה","אפונה","סלרי","פטרוזיליה","כוסברה","נענע","בזיליקום","רוקט","תרד","מנגולד","כרישה","פטריה","עמבה","אבוקדו","ארטישוק","אספרגוס","ביטשוי","חמוציות","פינהאפל"] },
+    { cat: "מוצרי חלב",   keywords: ["חלב","יוגורט","גבינ","קוטג","שמנת","חמאה","מרגרינ","לבן","ביצ","קפיר","ריקוטה","מוצרלה","פרמזן","צהובה","בולגרית","פטה","עמק","תנובה","שטראוס"] },
+    { cat: "בשר ודגים",   keywords: ["עוף","בשר","טחון","סטייק","כבש","הודו","ברווז","אווז","חזיר","נקניק","שניצל","קבב","כבד","לב","חזה","ירך","כנף","פרגית","דג","סלמון","טונה","מוסר","דניס","בורי","קרפיון","שרימפס","קלמרי","סרדין","אנשובי","ממרח דג"] },
+    { cat: "מאפים ולחם",  keywords: ["לחם","פיתה","בגט","חלה","לחמניה","קרואסון","עוגה","עוגיה","בישקוט","קרקר","מצה","טוסט","פוקצ'ה","ג'חנון","מלאווח","בורקס","קיש","שטרודל","רוגלך","מאפה"] },
+    { cat: "קפואים",      keywords: ["קפוא","גלידה","ארטיק","שורבה","פיצה קפואה","ירק קפוא","אפונה קפואה","תירס קפוא","שניצל קפוא","פרי קפוא","עוגה קפואה"] },
+    { cat: "שימורים ויבשים", keywords: ["שימור","טונה פחית","עגבניות מרוסקות","חומוס","טחינה","ממרח","ריבה","דבש","סילאן","שמן","חומץ","רוטב","פסטה","אורז","קוסקוס","בורגול","עדשה","חיטה","שיבולת שועל","גרנולה","דגני בוקר","קמח","סוכר","מלח","פלפל שחור","כמון","כורכום","פפריקה","קינמון","אניס","ציפורן","עלי דפנה","אגוז מוסקט","זרעי כוסברה","אבקת שום","אבקת בצל","מרק","אבקת מרק","רסק עגבניות","שעועית","גרגרי חומוס","עמידה","תבלין","אגוז","שקד","פיסטוק","קשיו","בוטן","אגוזי מלך","צנובר","שומשום","דלעת זרע","חמניה זרע","פשתן"] },
+    { cat: "משקאות",      keywords: ["מים","מיץ","קולה","פאנטה","ספרייט","סודה","גזוז","בירה","יין","וודקה","ויסקי","קפה","תה","קקאו","מילקשייק","שוקו","מיץ תפוזים","מיץ ענבים","משקה","אנרג'י","רד בול","נספרסו"] },
+    { cat: "ניקיון ונייר", keywords: ["נייר טואלט","מגבת נייר","טישו","מפית","ניקוי","סבון","שמפו","אקונומיקה","פיירי","ג'אוול","ג'ל כלים","אבקת כביסה","רכך","נוזל כביסה","מטרוגן","ממיס","חומר ניקוי","סמרטוט","מגב","מטאטא","שק זבל","שקית זבל","אלומיניום","נייר אפייה","ניילון נצמד","כפפות","ספוג","מברשת שיניים","משחת שיניים","חוט דנטלי","דאודורנט","קרם"] },
+    { cat: "טיפוח ובריאות", keywords: ["קרם פנים","קרם גוף","לוציון","אפטר שייב","תער","ג'ל שיניים","מי פה","שמפו","מרכך שיער","מסכת פנים","ויטמין","תוסף","אספירין","אקמול","נורופן","אנטיביוטיקה","תחבושת","פלסטר","כדור","סירופ","טיפות","מד חום","קונדום","טמפון","פד"] },
+  ];
+
+  function detectCategory(name) {
+    const lower = name.toLowerCase();
+    for (const rule of CAT_RULES) {
+      for (const kw of rule.keywords) {
+        if (lower.includes(kw.toLowerCase())) return rule.cat;
+      }
+    }
+    return "שונות";
+  }
 
   const fbApp = initializeApp(firebaseConfig);
   const db = getDatabase(fbApp);
@@ -148,7 +157,6 @@
     syncLabel.textContent = ok ? "מסונכרן" : "בעיית חיבור";
   }
 
-  // Seed
   get(itemsRef).then(snap => {
     if (!snap.exists()) {
       const seed = {};
@@ -157,7 +165,6 @@
     }
   });
 
-  // Listen
   onValue(itemsRef, snap => {
     setConnected(true);
     render(Object.values(snap.val() || {}));
@@ -186,7 +193,6 @@
       catItems.forEach(it => {
         const div = document.createElement("div");
         div.className = "item" + (it.done ? " done" : "");
-
         const qty = Number(it.qty) || 1;
 
         div.innerHTML =
@@ -199,22 +205,18 @@
           '</div>' +
           '<button class="item-del">×</button>';
 
-        // Toggle done — only cb and name
         const toggleDone = () => update(ref(db, "grocery/items/" + it.id), { done: !it.done });
         div.querySelector(".cb").addEventListener("click", toggleDone);
         div.querySelector(".item-name").addEventListener("click", toggleDone);
 
-        // Qty buttons
         div.querySelectorAll(".qty-btn").forEach(btn => {
           btn.addEventListener("click", e => {
             e.stopPropagation();
             const delta = btn.dataset.action === "plus" ? 1 : -1;
-            const newQty = Math.max(1, qty + delta);
-            update(ref(db, "grocery/items/" + it.id), { qty: newQty });
+            update(ref(db, "grocery/items/" + it.id), { qty: Math.max(1, qty + delta) });
           });
         });
 
-        // Delete
         div.querySelector(".item-del").addEventListener("click", e => {
           e.stopPropagation();
           remove(ref(db, "grocery/items/" + it.id));
@@ -226,81 +228,36 @@
     });
   }
 
-  // ── Add item with AI categorization ──
+  // ── Add item ──
   let addQty = 1;
   const addQtyNum = document.getElementById("add-qty-num");
   const aiHint = document.getElementById("ai-hint");
 
-  document.getElementById("add-qty-minus").addEventListener("click", () => {
-    addQty = Math.max(1, addQty - 1);
-    addQtyNum.textContent = addQty;
-  });
-  document.getElementById("add-qty-plus").addEventListener("click", () => {
-    addQty++;
-    addQtyNum.textContent = addQty;
-  });
+  document.getElementById("add-qty-minus").addEventListener("click", () => { addQty = Math.max(1, addQty-1); addQtyNum.textContent = addQty; });
+  document.getElementById("add-qty-plus").addEventListener("click",  () => { addQty++; addQtyNum.textContent = addQty; });
 
-  let aiTimer = null;
+  let detectedCat = "שונות";
   document.getElementById("new-item-input").addEventListener("input", e => {
     const val = e.target.value.trim();
-    clearTimeout(aiTimer);
-    aiHint.textContent = "";
-    if (val.length < 2) return;
-    aiTimer = setTimeout(() => categorize(val), 600);
+    if (val.length < 2) { aiHint.textContent = ""; detectedCat = "שונות"; return; }
+    detectedCat = detectCategory(val);
+    aiHint.textContent = detectedCat !== "שונות" ? "📂 " + detectedCat : "";
   });
 
-  let lastCat = "שונות";
-
-  async function categorize(name) {
-    aiHint.textContent = "🤖 מזהה קטגוריה...";
-    try {
-      const res = await fetch("https://api.anthropic.com/v1/messages", {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({
-          model: "claude-sonnet-4-6",
-          max_tokens: 1000,
-          messages: [{
-            role: "user",
-            content: `לאיזו קטגוריה שייך המוצר "${name}"? ענה רק בשם הקטגוריה מהרשימה הבאה, ללא הסברים:
-${CATEGORIES.join(", ")}`
-          }]
-        })
-      });
-      const data = await res.json();
-      const cat = data.content?.[0]?.text?.trim() || "שונות";
-      lastCat = CATEGORIES.includes(cat) ? cat : "שונות";
-      aiHint.textContent = "📂 קטגוריה: " + lastCat;
-    } catch(e) {
-      lastCat = "שונות";
-      aiHint.textContent = "";
-    }
-  }
-
-  async function addItem() {
+  function addItem() {
     const inp = document.getElementById("new-item-input");
     const val = inp.value.trim();
     if (!val) return;
+    if (detectedCat === "שונות") detectedCat = detectCategory(val);
     const id = "item_" + Date.now();
-    // If AI hasn't run yet, try to categorize now
-    if (aiHint.textContent === "" || aiHint.textContent.includes("מזהה")) {
-      await categorize(val);
-    }
-    set(ref(db, "grocery/items/" + id), { id, name: val, qty: addQty, cat: lastCat, done: false });
-    inp.value = "";
-    addQty = 1;
-    addQtyNum.textContent = "1";
-    aiHint.textContent = "";
-    lastCat = "שונות";
+    set(ref(db, "grocery/items/" + id), { id, name: val, qty: addQty, cat: detectedCat, done: false });
+    inp.value = ""; addQty = 1; addQtyNum.textContent = "1"; aiHint.textContent = ""; detectedCat = "שונות";
     inp.focus();
   }
 
   document.getElementById("btn-add").addEventListener("click", addItem);
-  document.getElementById("new-item-input").addEventListener("keydown", e => {
-    if (e.key === "Enter") addItem();
-  });
+  document.getElementById("new-item-input").addEventListener("keydown", e => { if (e.key === "Enter") addItem(); });
 
-  // Reset
   document.getElementById("btn-reset").addEventListener("click", () => {
     if (!confirm("לאפס את כל הסימונים?")) return;
     get(itemsRef).then(snap => {
