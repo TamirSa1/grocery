@@ -6,68 +6,150 @@
   <title>רשימת קניות</title>
   <style>
     *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
-    body { font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Arial, sans-serif; background: #f5f5f3; color: #1a1a1a; min-height: 100dvh; }
-    .app { max-width: 480px; margin: 0 auto; padding: 0 0 7rem; }
 
-    .header { position: sticky; top: 0; z-index: 10; background: #fff; border-bottom: 1px solid #e5e5e2; padding: 1rem 1.25rem 0.75rem; }
+    /* ── CSS Variables (Light + Dark) ── */
+    :root {
+      --bg-screen:   #F0F2F5;
+      --bg-card:     #FFFFFF;
+      --bg-header:   #FFFFFF;
+      --bg-input:    #F8F8F6;
+      --border:      #EEEEEE;
+      --border-input:#DDDDDD;
+      --text-primary:#1A1A1A;
+      --text-secondary:#6B7280;
+      --text-tertiary:#AAAAAA;
+      --accent:      #1d9e75;
+      --accent-dark: #178f69;
+      --shadow:      0 1px 4px rgba(0,0,0,0.08);
+      --radius-card: 14px;
+      --radius-btn:  10px;
+    }
+    .dark {
+      --bg-screen:   #111318;
+      --bg-card:     #1E2128;
+      --bg-header:   #16191F;
+      --bg-input:    #252830;
+      --border:      #2C2F38;
+      --border-input:#3A3D47;
+      --text-primary:#E6E6E6;
+      --text-secondary:#9CA3AF;
+      --text-tertiary:#555B68;
+      --shadow:      0 1px 6px rgba(0,0,0,0.4);
+    }
+
+    body { font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Arial, sans-serif; background: var(--bg-screen); color: var(--text-primary); min-height: 100dvh; transition: background 0.25s, color 0.25s; }
+    .app { max-width: 480px; margin: 0 auto; padding: 0 0 8rem; }
+
+    /* ── Header ── */
+    .header { position: sticky; top: 0; z-index: 10; background: var(--bg-header); border-bottom: 1px solid var(--border); padding: 0.85rem 1.25rem 0.65rem; transition: background 0.25s; }
     .header-top { display: flex; align-items: center; justify-content: space-between; margin-bottom: 0.6rem; }
-    .header h1 { font-size: 20px; font-weight: 600; display: flex; align-items: center; gap: 8px; }
-    .progress-label { font-size: 13px; color: #888; font-variant-numeric: tabular-nums; }
-    .progress-track { height: 5px; background: #e5e5e2; border-radius: 3px; overflow: hidden; }
-    .progress-fill { height: 100%; background: #1d9e75; border-radius: 3px; transition: width 0.35s ease; width: 0%; }
+    .header h1 { font-size: 20px; font-weight: 700; display: flex; align-items: center; gap: 8px; color: var(--text-primary); }
+    .header-actions { display: flex; align-items: center; gap: 10px; }
+    .progress-label { font-size: 13px; color: var(--text-secondary); background: var(--bg-screen); padding: 3px 10px; border-radius: 20px; font-variant-numeric: tabular-nums; }
+    .progress-track { height: 5px; background: var(--border); border-radius: 3px; overflow: hidden; }
+    .progress-fill { height: 100%; background: var(--accent); border-radius: 3px; transition: width 0.35s ease; width: 0%; }
 
-    .sync-bar { display: flex; align-items: center; gap: 6px; font-size: 12px; color: #aaa; padding: 0.4rem 1.25rem 0; }
-    .sync-dot { width: 7px; height: 7px; border-radius: 50%; background: #ccc; flex-shrink: 0; transition: background 0.3s; }
-    .sync-dot.connected { background: #1d9e75; }
-    .sync-dot.error { background: #e24b4a; }
+    /* ── Dark mode toggle ── */
+    .dark-toggle { background: var(--bg-input); border: 1px solid var(--border-input); border-radius: 50%; width: 32px; height: 32px; font-size: 16px; cursor: pointer; display: flex; align-items: center; justify-content: center; transition: background 0.2s; }
+    .dark-toggle:hover { background: var(--border); }
 
-    .done-banner { display: none; margin: 1rem 1.25rem 0; padding: 10px 14px; background: #e1f5ee; color: #085041; border-radius: 10px; font-size: 14px; text-align: center; }
+    /* ── Sync ── */
+    .sync-bar { display: flex; align-items: center; gap: 6px; font-size: 12px; color: var(--text-tertiary); padding: 0.4rem 1.25rem 0; }
+    .sync-dot { width: 7px; height: 7px; border-radius: 50%; background: var(--text-tertiary); flex-shrink: 0; transition: background 0.3s; }
+    .sync-dot.connected { background: var(--accent); }
+    .sync-dot.error     { background: #e24b4a; }
 
-    .loading { text-align: center; padding: 3rem 1rem; color: #bbb; font-size: 15px; }
-    .spinner { width: 28px; height: 28px; border: 3px solid #e5e5e2; border-top-color: #1d9e75; border-radius: 50%; animation: spin 0.8s linear infinite; margin: 0 auto 1rem; }
+    /* ── Done banner ── */
+    .done-banner { display: none; margin: 1rem 1.25rem 0; padding: 12px 16px; background: #E1F5EE; color: #085041; border-radius: var(--radius-card); font-size: 14px; text-align: center; font-weight: 500; }
+    .dark .done-banner { background: #0a3d2e; color: #6ee7b7; }
+
+    /* ── Loading ── */
+    .loading { text-align: center; padding: 3rem 1rem; color: var(--text-tertiary); font-size: 15px; }
+    .spinner { width: 28px; height: 28px; border: 3px solid var(--border); border-top-color: var(--accent); border-radius: 50%; animation: spin 0.8s linear infinite; margin: 0 auto 1rem; }
     @keyframes spin { to { transform: rotate(360deg); } }
 
-    .category { margin-top: 1.25rem; padding: 0 1.25rem; }
-    .cat-label { font-size: 11px; font-weight: 600; letter-spacing: 0.07em; color: #aaa; text-transform: uppercase; margin-bottom: 8px; }
+    /* ── Category ── */
+    .category { margin-top: 1.1rem; padding: 0 1rem; }
+    .cat-header { display: flex; align-items: center; gap: 8px; padding: 6px 12px; border-radius: 10px; margin-bottom: 8px; }
+    .cat-icon  { font-size: 16px; line-height: 1; }
+    .cat-label { font-size: 11px; font-weight: 800; letter-spacing: 0.06em; text-transform: uppercase; }
 
-    .item { display: flex; align-items: center; gap: 10px; padding: 10px 13px; background: #fff; border: 1px solid #e8e8e5; border-radius: 10px; margin-bottom: 6px; -webkit-tap-highlight-color: transparent; }
-    .item.done { opacity: 0.45; }
-    .item.done .item-name { text-decoration: line-through; color: #999; }
+    /* Category colour themes — light */
+    .cat--פירות-וירקות          { background:#E8F5E9; } .cat--פירות-וירקות          .cat-label { color:#2E7D32; }
+    .cat--מוצרי-חלב             { background:#E3F2FD; } .cat--מוצרי-חלב             .cat-label { color:#1565C0; }
+    .cat--ביצים                  { background:#FFF9E6; } .cat--ביצים                  .cat-label { color:#F57F17; }
+    .cat--בשר-עוף-ודגים         { background:#FFEBEE; } .cat--בשר-עוף-ודגים         .cat-label { color:#B71C1C; }
+    .cat--לחם-ומאפים             { background:#FFF3E0; } .cat--לחם-ומאפים             .cat-label { color:#E65100; }
+    .cat--קפואים                 { background:#E0F7FA; } .cat--קפואים                 .cat-label { color:#006064; }
+    .cat--מוצרי-יסוד-ושימורים   { background:#EFEBE9; } .cat--מוצרי-יסוד-ושימורים   .cat-label { color:#4E342E; }
+    .cat--חטיפים-וממתקים         { background:#FCE4EC; } .cat--חטיפים-וממתקים         .cat-label { color:#880E4F; }
+    .cat--משקאות                 { background:#F3E5F5; } .cat--משקאות                 .cat-label { color:#4A148C; }
+    .cat--ניקיון-הבית            { background:#ECEFF1; } .cat--ניקיון-הבית            .cat-label { color:#263238; }
+    .cat--פארם-וטואלטיקה         { background:#E0F2F1; } .cat--פארם-וטואלטיקה         .cat-label { color:#004D40; }
+    .cat--תינוקות                { background:#FCE4EC; } .cat--תינוקות                .cat-label { color:#880E4F; }
+    .cat--חיות-מחמד              { background:#F1F8E9; } .cat--חיות-מחמד              .cat-label { color:#33691E; }
+    .cat--שונות                  { background:#F5F5F5; } .cat--שונות                  .cat-label { color:#616161; }
 
-    .cb { width: 24px; height: 24px; border-radius: 50%; border: 2px solid #ccc; display: flex; align-items: center; justify-content: center; flex-shrink: 0; transition: background 0.15s, border-color 0.15s; cursor: pointer; }
-    .item.done .cb { background: #1d9e75; border-color: #1d9e75; }
+    /* Dark mode category overrides */
+    .dark .cat--פירות-וירקות         { background:#1B2E1C; } .dark .cat--פירות-וירקות         .cat-label { color:#81C784; }
+    .dark .cat--מוצרי-חלב            { background:#0D2137; } .dark .cat--מוצרי-חלב            .cat-label { color:#64B5F6; }
+    .dark .cat--ביצים                 { background:#2A2010; } .dark .cat--ביצים                 .cat-label { color:#FFD54F; }
+    .dark .cat--בשר-עוף-ודגים        { background:#2D1215; } .dark .cat--בשר-עוף-ודגים        .cat-label { color:#EF9A9A; }
+    .dark .cat--לחם-ומאפים            { background:#2A1D0C; } .dark .cat--לחם-ומאפים            .cat-label { color:#FFCC80; }
+    .dark .cat--קפואים                { background:#09282B; } .dark .cat--קפואים                .cat-label { color:#80DEEA; }
+    .dark .cat--מוצרי-יסוד-ושימורים  { background:#1E1713; } .dark .cat--מוצרי-יסוד-ושימורים  .cat-label { color:#BCAAA4; }
+    .dark .cat--חטיפים-וממתקים        { background:#2B0E1C; } .dark .cat--חטיפים-וממתקים        .cat-label { color:#F48FB1; }
+    .dark .cat--משקאות                { background:#1E0F2B; } .dark .cat--משקאות                .cat-label { color:#CE93D8; }
+    .dark .cat--ניקיון-הבית           { background:#161C1F; } .dark .cat--ניקיון-הבית           .cat-label { color:#90A4AE; }
+    .dark .cat--פארם-וטואלטיקה        { background:#0A2420; } .dark .cat--פארם-וטואלטיקה        .cat-label { color:#80CBC4; }
+    .dark .cat--תינוקות               { background:#2B0E1C; } .dark .cat--תינוקות               .cat-label { color:#F48FB1; }
+    .dark .cat--חיות-מחמד             { background:#182210; } .dark .cat--חיות-מחמד             .cat-label { color:#AED581; }
+    .dark .cat--שונות                 { background:#1E1E1E; } .dark .cat--שונות                 .cat-label { color:#9E9E9E; }
+
+    /* ── Item ── */
+    .item { display: flex; align-items: center; gap: 10px; padding: 11px 13px; background: var(--bg-card); border: 1px solid var(--border); border-radius: var(--radius-card); margin-bottom: 7px; box-shadow: var(--shadow); -webkit-tap-highlight-color: transparent; transition: opacity 0.2s, background 0.25s; }
+    .item:active { opacity: 0.85; }
+    .item.done { opacity: 0.4; }
+    .item.done .item-name { text-decoration: line-through; color: var(--text-secondary); }
+
+    .cb { width: 26px; height: 26px; border-radius: 50%; border: 2px solid var(--border-input); display: flex; align-items: center; justify-content: center; flex-shrink: 0; transition: background 0.15s, border-color 0.15s; cursor: pointer; }
+    .item.done .cb { background: var(--accent); border-color: var(--accent); }
     .cb svg { display: none; width: 13px; height: 13px; stroke: #fff; stroke-width: 2.5; fill: none; stroke-linecap: round; stroke-linejoin: round; }
     .item.done .cb svg { display: block; }
 
-    .item-name { flex: 1; font-size: 15px; cursor: pointer; }
-
+    .item-name { flex: 1; font-size: 15px; cursor: pointer; font-weight: 500; color: var(--text-primary); }
     .qty-controls { display: flex; align-items: center; gap: 6px; flex-shrink: 0; }
-    .qty-btn { width: 28px; height: 28px; border-radius: 50%; border: 1.5px solid #ddd; background: #f5f5f3; font-size: 18px; line-height: 1; cursor: pointer; display: flex; align-items: center; justify-content: center; color: #555; transition: background 0.12s; }
-    .qty-btn:hover { background: #e8e8e5; }
-    .qty-num { font-size: 15px; font-weight: 500; min-width: 20px; text-align: center; }
-
-    .item-del { background: none; border: none; cursor: pointer; color: #ccc; font-size: 20px; line-height: 1; padding: 2px 4px; border-radius: 4px; flex-shrink: 0; }
+    .qty-btn { width: 28px; height: 28px; border-radius: 50%; border: 1.5px solid var(--border-input); background: var(--bg-input); font-size: 18px; cursor: pointer; display: flex; align-items: center; justify-content: center; color: var(--text-secondary); transition: background 0.12s; }
+    .qty-btn:hover { background: var(--border); }
+    .qty-num { font-size: 15px; font-weight: 600; min-width: 20px; text-align: center; color: var(--text-primary); }
+    .item-del { background: none; border: none; cursor: pointer; color: var(--border-input); font-size: 20px; padding: 2px 4px; border-radius: 4px; flex-shrink: 0; }
     .item-del:hover { color: #e24b4a; background: #fdf0f0; }
 
-    .add-section { position: fixed; bottom: 0; right: 0; left: 0; background: #fff; border-top: 1px solid #e5e5e2; padding: 0.6rem 1rem; max-width: 480px; margin: 0 auto; }
+    /* ── FAB ── */
+    .fab { position: fixed; bottom: 88px; left: 50%; transform: translateX(-50%); width: 56px; height: 56px; border-radius: 50%; background: var(--accent); color: #fff; border: none; font-size: 28px; cursor: pointer; box-shadow: 0 4px 16px rgba(29,158,117,0.45); display: flex; align-items: center; justify-content: center; transition: transform 0.15s, box-shadow 0.15s; z-index: 20; }
+    .fab:active { transform: translateX(-50%) scale(0.92); box-shadow: 0 2px 8px rgba(29,158,117,0.3); }
+
+    /* ── Add bottom bar ── */
+    .add-section { position: fixed; bottom: 0; right: 0; left: 0; background: var(--bg-header); border-top: 1px solid var(--border); padding: 0.6rem 1rem; max-width: 480px; margin: 0 auto; transition: background 0.25s; }
     .add-row { display: flex; gap: 8px; align-items: center; }
-    .add-name { flex: 1; padding: 10px 13px; border: 1px solid #ddd; border-radius: 10px; font-size: 15px; background: #f8f8f6; color: #1a1a1a; outline: none; min-width: 0; }
-    .add-name:focus { border-color: #1d9e75; background: #fff; }
+    .add-name { flex: 1; padding: 10px 13px; border: 1px solid var(--border-input); border-radius: var(--radius-btn); font-size: 15px; background: var(--bg-input); color: var(--text-primary); outline: none; min-width: 0; transition: background 0.25s, border-color 0.2s; }
+    .add-name:focus { border-color: var(--accent); background: var(--bg-card); }
     .add-qty-wrap { display: flex; align-items: center; gap: 5px; flex-shrink: 0; }
-    .add-qty-btn { width: 30px; height: 30px; border-radius: 50%; border: 1.5px solid #ddd; background: #f5f5f3; font-size: 18px; cursor: pointer; display: flex; align-items: center; justify-content: center; color: #555; }
-    .add-qty-btn:hover { background: #e8e8e5; }
-    .add-qty-num { font-size: 15px; font-weight: 500; min-width: 22px; text-align: center; }
-    .btn-add { padding: 10px 15px; background: #1d9e75; color: #fff; border: none; border-radius: 10px; font-size: 15px; font-weight: 500; cursor: pointer; white-space: nowrap; }
-    .btn-add:hover { background: #178f69; }
-    .btn-reset { padding: 10px 12px; background: none; border: 1px solid #ddd; border-radius: 10px; font-size: 13px; color: #888; cursor: pointer; white-space: nowrap; }
-    .btn-reset:hover { background: #f5f5f3; }
+    .add-qty-btn { width: 30px; height: 30px; border-radius: 50%; border: 1.5px solid var(--border-input); background: var(--bg-input); font-size: 18px; cursor: pointer; display: flex; align-items: center; justify-content: center; color: var(--text-secondary); }
+    .add-qty-btn:hover { background: var(--border); }
+    .add-qty-num { font-size: 15px; font-weight: 600; min-width: 22px; text-align: center; color: var(--text-primary); }
+    .btn-add { padding: 10px 15px; background: var(--accent); color: #fff; border: none; border-radius: var(--radius-btn); font-size: 15px; font-weight: 500; cursor: pointer; white-space: nowrap; }
+    .btn-add:hover { background: var(--accent-dark); }
+    .btn-reset { padding: 10px 12px; background: none; border: 1px solid var(--border-input); border-radius: var(--radius-btn); font-size: 13px; color: var(--text-secondary); cursor: pointer; white-space: nowrap; }
+    .btn-reset:hover { background: var(--bg-input); }
 
-    .ai-hint { font-size: 12px; color: #1d9e75; padding: 3px 0 1px; min-height: 18px; }
-    .empty { text-align: center; padding: 3rem 1rem; color: #bbb; font-size: 15px; }
+    .ai-hint { font-size: 12px; color: var(--accent); padding: 3px 0 1px; min-height: 18px; font-weight: 500; }
+    .empty { text-align: center; padding: 3rem 1rem; color: var(--text-tertiary); font-size: 15px; }
 
-    /* toast */
-    .toast { position: fixed; top: 80px; left: 50%; transform: translateX(-50%) translateY(-10px); background: #333; color: #fff; padding: 8px 16px; border-radius: 20px; font-size: 13px; opacity: 0; transition: opacity 0.2s, transform 0.2s; pointer-events: none; z-index: 100; white-space: nowrap; }
+    /* ── Toast ── */
+    .toast { position: fixed; top: 80px; left: 50%; transform: translateX(-50%) translateY(-10px); background: #333; color: #fff; padding: 8px 18px; border-radius: 20px; font-size: 13px; opacity: 0; transition: opacity 0.2s, transform 0.2s; pointer-events: none; z-index: 100; white-space: nowrap; }
     .toast.show { opacity: 1; transform: translateX(-50%) translateY(0); }
+    .dark .toast { background: #e6e6e6; color: #111; }
   </style>
 </head>
 <body>
@@ -75,7 +157,10 @@
   <header class="header">
     <div class="header-top">
       <h1>🛒 רשימת קניות</h1>
-      <span class="progress-label" id="prog-label">0 / 0</span>
+      <div class="header-actions">
+        <span class="progress-label" id="prog-label">0 / 0</span>
+        <button class="dark-toggle" id="dark-toggle" title="מצב כהה/בהיר">🌙</button>
+      </div>
     </div>
     <div class="progress-track"><div class="progress-fill" id="prog-fill"></div></div>
   </header>
@@ -129,117 +214,164 @@
     { id: "item8", name: "יוגורט פרו תות",   qty: 4, cat: "מוצרי חלב",   done: false },
   ];
 
-  // ── Category dictionary (ordered = supermarket aisle order) ──
-  const CAT_RULES = [
-    { cat: "פירות וירקות", keywords: [
-      "תפוח","תפוז","בננה","ענבים","ענב","אגס","מנגו","אבטיח","מלון","תות",
-      "אפרסק","נקטרינה","שזיף","דובדבן","לימון","אשכולית","פומלה","קיווי",
-      "אנונה","רימון","תמר","ליים","פפאיה","פסיפלורה","אננס","קוקוס",
-      "צימוקים","פרי יבש","פירות יבשים","חמוציות","משמש",
-      "עגבניה","עגבניות","מלפפון","מלפפונים","פלפל","חסה","גזר","בצל","שום",
-      "תפוח אדמה","בטטה","קישוא","זוקיני","חציל","ברוקולי","כרובית","כרוב",
-      "תירס","שעועית ירוקה","אפונה ירוקה","סלרי","פטרוזיליה","כוסברה","עגבניות","מלפפונים","פטריות","בצלים","שומים","גזרים","קישואים","חצילים","תפוחי אדמה","בטטות","כרובים","אבוקדואים","דלועים",
-      "נענע","בזיליקום","רוקט","תרד","מנגולד","כרישה","פטריה","פטריות",
-      "אבוקדו","ארטישוק","אספרגוס","צנון","צנונית","לפת","קולרבי",
-      "שמיר","עירית","דלעת","דלורית","ג'ינג'ר","כורכום טרי","לוף"
-    ]},
-    { cat: "מוצרי חלב", keywords: [
-      "חלב","יוגורט","גבינה","גבינת","קוטג'","קוטג","שמנת","חמאה",
-      "מרגרינה","אשל","קפיר","ריקוטה","מוצרלה","פרמזן",
-      "גבינה צהובה","עמק","גלבוע","בולגרית","פטה","גאודה","צ'דר","ברי","קממבר",
-      "מסקרפונה","לאבנה","דנונה","תנובה","שטראוס","יטבתה","טרה","מילקי","מעדן"
-    ]},
-    { cat: "ביצים", keywords: [
-      "ביצה","ביצים","תבנית ביצים","ביצי חופש","ביצים אורגניות"
-    ]},
-    { cat: "בשר, עוף ודגים", keywords: [
-      "עוף","חזה עוף","ירך עוף","כנפיים","שוקיים","פרגית","קורקבנים","כבד עוף",
-      "בשר","בקר","בשר טחון","סטייק","אנטריקוט","פילה","צלעות","קבב","המבורגר",
-      "כבש","טלה","אסאדו","שפונדרה","צלי","גולש",
-      "נקניק","נקניקיה","נקניקיות","סלמי","פסטרמה","קורנביף",
-      "דג","סלמון","טונה טרייה","מוסר","דניס","בורי","קרפיון","לברק",
-      "שרימפס","קלמרי","הליבוט","בקלה","פורל","ברמונדי","אמנון","פילה דג"
-    ]},
-    { cat: "לחם ומאפים", keywords: [
-      "לחם","פיתה","פיתות","בגט","חלה","לחמניה","לחמניות","עוגה","עוגיות",
-      "קרקר","מצה","מצות","טוסט","פוקצ'ה","ג'חנון","מלאווח","בורקס",
-      "קיש","שטרודל","רוגלך","מאפה","בייגלה","לאפה","דונאטס",
-      "מאפינס","בראוניז","פנקייק","פירורי לחם"
-    ]},
-    { cat: "קפואים", keywords: [
-      "גלידה","ארטיק","קרטיב","סורבה","פיצה קפואה",
-      "אפונה קפואה","תירס קפוא","שניצל קפוא","ירקות קפואים","צ'יפס קפוא",
-      "בצק עלים קפוא","אדממה","דג קפוא","פירות ים קפואים","קפוא","קפואים"
-    ]},
-    { cat: "מוצרי יסוד ושימורים", keywords: [
-      "פחית טונה","טונה","עגבניות מרוסקות","רסק עגבניות",
-      "תירס בשימורים","זיתים","חמוצים","מלפפונים חמוצים","טחינה","חומוס",
-      "ריבה","דבש","סילאן","מייפל","חרדל","מיונז","קטשופ","חמאת בוטנים",
-      "שמן זית","שמן קנולה","שמן חמניות","שמן קוקוס","חומץ","בלסמי",
-      "רוטב פסטה","רוטב עגבניות","רוטב סויה","טריאקי",
-      "פסטה","ספגטי","מקרוני","פנה","פתיתים","נודלס","אורז","קוסקוס","בורגול",
-      "עדשים","חיטה","כוסמת","קינואה","שיבולת שועל","שעועית יבשה","גרגירי חומוס",
-      "קמח","סוכר","מלח","שמרים","אבקת אפייה","סודה לשתייה","קקאו","שוקולד מריר",
-      "פלפל שחור","כמון","פפריקה","קינמון","כורכום","זעתר","אבקת מרק","תבלין",
-      "קורנפלקס","גרנולה","דגני בוקר","מוזלי",
-      "אגוזים","שקדים","פיסטוק","קשיו","בוטנים","גרעינים","צנובר","שומשום","שימורים"
-    ]},
-    { cat: "חטיפים וממתקים", keywords: [
-      "במבה","ביסלי","תפוצ'יפס","צ'יפס","דוריטוס","אפרופו","חטיף","פופקורן",
-      "שוקולד","סוכריות","מסטיק","מרשמלו","וופלים","ממתק","קרמבו","בר שוקולד","פראלינה"
-    ]},
-    { cat: "משקאות", keywords: [
-      "מים מינרליים","שישיית מים","מיץ","קולה","פאנטה","ספרייט","סודה","גזוז","בירה",
-      "יין","שמפניה","קאווה","וודקה","ויסקי","ברנדי","רום","טקילה","עראק",
-      "קפה","נס קפה","תה","תיונים","שוקו","תרכיז","משקה אנרגיה","רד בול",
-      "קפסולות קפה","חלב שקדים","חלב שיבולת שועל","חלב סויה","משקה"
-    ]},
-    { cat: "ניקיון הבית", keywords: [
-      "נייר טואלט","מגבות נייר","נייר סופג","טישו","מפיות","נייר אפייה","ניילון נצמד",
-      "שקיות זבל","נייר כסף","רדיד אלומיניום","חד פעמי","כוסות חד פעמי","צלחות חד פעמי",
-      "סבון כלים","נוזל כלים","אקונומיקה","מסיר שומנים","טבליות מדיח","נוזל רצפות",
-      "אבקת כביסה","נוזל כביסה","מרכך כביסה","קפסולות כביסה","מסיר כתמים",
-      "חומר הדברה","מנקה חלונות","וינדקס","מגב","סמרטוט","מטאטא",
-      "ספוג","כפפות","מברשת אסלה","סבון","ניקוי"
-    ]},
-    { cat: "פארם וטואלטיקה", keywords: [
-      "סבון גוף","תחליב רחצה","סבון ידיים","שמפו","מרכך שיער","דאודורנט",
-      "מברשת שיניים","משחת שיניים","חוט דנטלי","מי פה","תחבושות היגייניות","טמפונים",
-      "קרם פנים","קרם גוף","קרם ידיים","סרום","אפטר שייב","קצף גילוח","סכין גילוח",
-      "מסיר איפור","קונסילר","שפתון","אודם","מסקרה","לק ציפורניים","מסיר לק","בושם","קרם הגנה",
-      "ויטמינים","אומגה","מגנזיום","פרוביוטיקה","אקמול","נורופן","אדוויל",
-      "פלסטרים","תחבושת","מד חום","קונדומים","חיתולים","מגבונים"
-    ]}
+  // ══════════════════════════════════════════
+  //  SMART CATEGORIZATION ENGINE
+  //  1. SINGULAR_MAP  – חריגים יחיד/רבים
+  //  2. normalizeSuffix – כללי סיומות
+  //  3. levenshtein – מרחק עריכה
+  //  4. generatePhoneticVariants – וריאציות צליל
+  //  5. correctWord – תיקון שגיאות + צליל
+  //  6. detectCategory – זיהוי + הקשר
+  // ══════════════════════════════════════════
+
+  const SINGULAR_MAP = {
+    "בננות":"בננה","עגבניות":"עגבניה","מלפפונים":"מלפפון","פלפלים":"פלפל",
+    "בצלים":"בצל","גזרים":"גזר","קישואים":"קישוא","חצילים":"חציל",
+    "תפוחי אדמה":"תפוח אדמה","בטטות":"בטטה","פטריות":"פטריה",
+    "יוגורטים":"יוגורט","שוקולדים":"שוקולד","פסטות":"פסטה",
+    "קלמנטינות":"קלמנטינה","מנדרינות":"מנדרינה","אשכוליות":"אשכולית",
+    "לימונים":"לימון","ענבים":"ענב","תותים":"תות","שזיפים":"שזיף",
+    "אפרסקים":"אפרסק","נקטרינות":"נקטרינה","תפוחים":"תפוח","תפוזים":"תפוז",
+    "אגסים":"אגס","אבטיחים":"אבטיח","מלונים":"מלון","מנגואים":"מנגו",
+    "קיווים":"קיווי","אננסים":"אננס","משמשים":"משמש","רימונים":"רימון",
+    "תמרים":"תמר","דובדבנים":"דובדבן","תפוחי עץ":"תפוח","אבוקדואים":"אבוקדו",
+    "צנוניות":"צנון","חסות":"חסה","שומים":"שום","כרובים":"כרוב",
+    "לחמניות":"לחמניה","פיתות":"פיתה","עוגיות":"עוגיה","נקניקיות":"נקניקיה",
+    "חיתולים":"חיתול","מגבונים":"מגבון","פלסטרים":"פלסטר",
+    "אגוזים":"אגוז","שקדים":"שקד","גרעינים":"גרעין"
+  };
+
+  // 1. ניקוי
+  function cleanWord(w) {
+    return w.trim().replace(/[״׳"']/g, "").replace(/\s+/g, " ");
+  }
+
+  // 2. נרמול סיומות
+  function normalizeSuffix(word) {
+    if (SINGULAR_MAP[word]) return SINGULAR_MAP[word];
+    if (word.endsWith("ות")) return word.slice(0, -2) + "ה";
+    if (word.endsWith("ים")) return word.slice(0, -2);
+    return word;
+  }
+
+  // 3. Levenshtein
+  function levenshtein(a, b) {
+    if (Math.abs(a.length - b.length) > 3) return 99;
+    const m = [];
+    for (let i = 0; i <= a.length; i++) m[i] = [i];
+    for (let j = 0; j <= b.length; j++) m[0][j] = j;
+    for (let i = 1; i <= a.length; i++)
+      for (let j = 1; j <= b.length; j++) {
+        const cost = a[i-1] === b[j-1] ? 0 : 1;
+        m[i][j] = Math.min(m[i-1][j]+1, m[i][j-1]+1, m[i-1][j-1]+cost);
+      }
+    return m[a.length][b.length];
+  }
+
+  // 4. וריאציות פונטיות
+  const PHONETIC_GROUPS = [
+    ["ב","ו"],["ת","ט"],["ס","ש"],["ק","כ","ח"],["א","ה"],["צ","ס"],["פ","ב"]
   ];
-
-  // סדר הקטגוריות לפי מיקום פיזי בסופר + שונות תמיד בסוף
-  const ORDERED_CATS = [...CAT_RULES.map(r => r.cat), "שונות"];
-
-  // ── Scoring categorizer ──
-  function detectCategory(itemName) {
-    const clean = itemName.trim();
-    let best = { cat: "שונות", score: 0 };
-    for (const rule of CAT_RULES) {
-      for (const kw of rule.keywords) {
-        // התאמה מלאה — ניצחון מיידי
-        if (clean === kw) return rule.cat;
-        // הקלט מכיל את מילת המפתח ("פלפל אדום" מכיל "פלפל")
-        if (clean.includes(kw)) {
-          const score = kw.length;
-          if (score > best.score) best = { cat: rule.cat, score };
-        }
-        // מילת המפתח מכילה את הקלט — תופס רבים שמכילים יחיד
-        // למשל: "מלפפונים".includes("מלפפון") = true
-        if (kw.includes(clean) && clean.length >= 3) {
-          const score = clean.length;
-          if (score > best.score) best = { cat: rule.cat, score };
+  function generatePhoneticVariants(word) {
+    const variants = new Set([word]);
+    // הסרת אות כפולה: "מלפופון" → "מלפון"
+    variants.add(word.replace(/(.)\1+/g, "$1"));
+    // החלפות צליליות (רק החלפה ראשונה לכל קבוצה — לא להכביד)
+    for (const group of PHONETIC_GROUPS) {
+      for (const letter of group) {
+        if (word.includes(letter)) {
+          for (const alt of group) {
+            if (alt !== letter) variants.add(word.replace(letter, alt));
+          }
         }
       }
     }
+    return [...variants];
+  }
+
+  // 5. בניית מילון שטוח (lazy, once)
+  let _allKws = null;
+  function getAllKeywords() {
+    if (_allKws) return _allKws;
+    const s = new Set();
+    CAT_RULES.forEach(r => r.keywords.forEach(k => {
+      s.add(k);
+      s.add(normalizeSuffix(cleanWord(k)));
+    }));
+    _allKws = [...s];
+    return _allKws;
+  }
+
+  // 6. תיקון מילה אחת (Levenshtein + פונטיקה)
+  function correctWord(word) {
+    const allKws = getAllKeywords();
+    const variants = generatePhoneticVariants(word);
+    let best = word, bestScore = 99;
+    for (const v of variants) {
+      for (const kw of allKws) {
+        const d = levenshtein(v, kw);
+        if (d < bestScore && d <= 2) { bestScore = d; best = kw; }
+      }
+    }
+    return best;
+  }
+
+  // 7. מילות תיאור (לא מוצרים)
+  const DESCRIPTORS = new Set([
+    "אדום","צהוב","ירוק","כתום","סגול","לבן","שחור","חום",
+    "שרי","תמר","רומית","בלאדי","טרי","קפוא","גדול","קטן",
+    "מלא","רזה","דל","עשיר","אורגני","טבעי","ביתי","מיובש",
+    "500","250","1","2","3","4","5","6","7","8","גרם","קג","ליטר","מ"
+  ]);
+
+  // 8. detectCategory — מלא עם הקשר
+  function detectCategory(itemName) {
+    const clean   = cleanWord(itemName);
+    const tokens  = clean.split(/\s+/).filter(Boolean);
+    let best = { cat: "שונות", score: 0 };
+
+    function scoreText(text) {
+      for (const rule of CAT_RULES) {
+        for (const kw of rule.keywords) {
+          const nkw = normalizeSuffix(cleanWord(kw));
+          if (text === kw || text === nkw) return rule.cat; // exact
+          if (text.includes(kw) || text.includes(nkw)) {
+            const sc = kw.length;
+            if (sc > best.score) best = { cat: rule.cat, score: sc };
+          }
+          if ((kw.includes(text) || nkw.includes(text)) && text.length >= 3) {
+            const sc = text.length;
+            if (sc > best.score) best = { cat: rule.cat, score: sc };
+          }
+        }
+      }
+      return null;
+    }
+
+    // Pass 1 — בדיקת המשפט המלא + גרסה מנורמלת
+    const norm = normalizeSuffix(clean);
+    if (scoreText(clean)) return scoreText(clean);
+    if (scoreText(norm))  return scoreText(norm);
+    if (best.cat !== "שונות") return best.cat;
+
+    // Pass 2 — לפי טוקן, עם תיקון שגיאות + פונטיקה
+    // מזהה מילת ליבה (לא תיאור)
+    const coreTokens = tokens.filter(t => !DESCRIPTORS.has(t));
+    const allTokens  = coreTokens.length ? coreTokens : tokens;
+
+    for (const token of allTokens) {
+      const normalized = normalizeSuffix(token);
+      for (const candidate of [token, normalized, correctWord(normalized)]) {
+        const r = scoreText(candidate);
+        if (r) return r;
+        if (best.cat !== "שונות") return best.cat;
+      }
+    }
+
     return best.cat;
   }
 
-  // ── Toast ──
+    // ── Toast ──
   function showToast(msg) {
     const t = document.getElementById("toast");
     t.textContent = msg;
@@ -302,11 +434,32 @@
         return (ai === -1 ? 999 : ai) - (bi === -1 ? 999 : bi);
       });
 
+    const CAT_META = {
+      "פירות וירקות":         { icon: "🥦", cls: "פירות-וירקות" },
+      "מוצרי חלב":            { icon: "🥛", cls: "מוצרי-חלב" },
+      "ביצים":                { icon: "🥚", cls: "ביצים" },
+      "בשר, עוף ודגים":       { icon: "🍗", cls: "בשר-עוף-ודגים" },
+      "לחם ומאפים":           { icon: "🍞", cls: "לחם-ומאפים" },
+      "קפואים":               { icon: "❄️",  cls: "קפואים" },
+      "מוצרי יסוד ושימורים": { icon: "🥫", cls: "מוצרי-יסוד-ושימורים" },
+      "חטיפים וממתקים":       { icon: "🍬", cls: "חטיפים-וממתקים" },
+      "משקאות":               { icon: "🥤", cls: "משקאות" },
+      "ניקיון הבית":          { icon: "🧽", cls: "ניקיון-הבית" },
+      "פארם וטואלטיקה":       { icon: "🧴", cls: "פארם-וטואלטיקה" },
+      "תינוקות":              { icon: "👶", cls: "תינוקות" },
+      "חיות מחמד":            { icon: "🐾", cls: "חיות-מחמד" },
+      "שונות":                { icon: "📦", cls: "שונות" },
+    };
+
     sortedCatKeys.forEach(cat => {
       const catItems = cats[cat];
+      const meta = CAT_META[cat] || { icon: "📦", cls: "שונות" };
       const sec = document.createElement("section");
       sec.className = "category";
-      sec.innerHTML = '<div class="cat-label">' + esc(cat) + '</div>';
+      sec.innerHTML = '<div class="cat-header cat--' + meta.cls + '">' +
+        '<span class="cat-icon">' + meta.icon + '</span>' +
+        '<span class="cat-label">' + esc(cat) + '</span>' +
+        '</div>';
 
       catItems.forEach(it => {
         const div = document.createElement("div");
@@ -399,6 +552,20 @@
   });
 
   function esc(s) { return String(s||"").replace(/&/g,"&amp;").replace(/</g,"&lt;").replace(/>/g,"&gt;"); }
+
+  // ── Dark mode ──
+  const darkToggle = document.getElementById("dark-toggle");
+  const html = document.documentElement;
+  // Respect system preference on first load
+  if (window.matchMedia("(prefers-color-scheme: dark)").matches) {
+    html.classList.add("dark");
+    darkToggle.textContent = "☀️";
+  }
+  darkToggle.addEventListener("click", () => {
+    html.classList.toggle("dark");
+    darkToggle.textContent = html.classList.contains("dark") ? "☀️" : "🌙";
+  });
+
 </script>
 </body>
 </html>
