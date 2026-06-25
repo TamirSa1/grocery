@@ -1,5 +1,4 @@
-<!DO
-CTYPE html>
+<!DOCTYPE html>
 <html lang="he" dir="rtl">
 <head>
   <meta charset="UTF-8" />
@@ -8,149 +7,131 @@ CTYPE html>
   <style>
     *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
 
-    /* ── CSS Variables (Light + Dark) ── */
     :root {
-      --bg-screen:   #F0F2F5;
-      --bg-card:     #FFFFFF;
-      --bg-header:   #FFFFFF;
-      --bg-input:    #F8F8F6;
-      --border:      #EEEEEE;
-      --border-input:#DDDDDD;
-      --text-primary:#1A1A1A;
-      --text-secondary:#6B7280;
-      --text-tertiary:#AAAAAA;
-      --accent:      #1d9e75;
-      --accent-dark: #178f69;
-      --shadow:      0 1px 4px rgba(0,0,0,0.08);
-      --radius-card: 14px;
-      --radius-btn:  10px;
+      --bg:      #F0F2F5;
+      --card:    #FFFFFF;
+      --header:  #FFFFFF;
+      --input:   #F8F8F6;
+      --border:  #EEEEEE;
+      --bdinput: #DDDDDD;
+      --t1:      #1A1A1A;
+      --t2:      #6B7280;
+      --t3:      #AAAAAA;
+      --green:   #1d9e75;
+      --green2:  #178f69;
+      --shadow:  0 1px 4px rgba(0,0,0,0.08);
+      --r:       14px;
     }
     .dark {
-      --bg-screen:   #111318;
-      --bg-card:     #1E2128;
-      --bg-header:   #16191F;
-      --bg-input:    #252830;
-      --border:      #2C2F38;
-      --border-input:#3A3D47;
-      --text-primary:#E6E6E6;
-      --text-secondary:#9CA3AF;
-      --text-tertiary:#555B68;
-      --shadow:      0 1px 6px rgba(0,0,0,0.4);
+      --bg:      #111318;
+      --card:    #1E2128;
+      --header:  #16191F;
+      --input:   #252830;
+      --border:  #2C2F38;
+      --bdinput: #3A3D47;
+      --t1:      #E6E6E6;
+      --t2:      #9CA3AF;
+      --t3:      #555B68;
+      --shadow:  0 1px 6px rgba(0,0,0,0.4);
     }
 
-    body { font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Arial, sans-serif; background: var(--bg-screen); color: var(--text-primary); min-height: 100dvh; transition: background 0.25s, color 0.25s; }
+    body { font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Arial, sans-serif; background: var(--bg); color: var(--t1); min-height: 100dvh; transition: background .25s, color .25s; }
     .app { max-width: 480px; margin: 0 auto; padding: 0 0 8rem; }
 
-    /* ── Header ── */
-    .header { position: sticky; top: 0; z-index: 10; background: var(--bg-header); border-bottom: 1px solid var(--border); padding: 0.85rem 1.25rem 0.65rem; transition: background 0.25s; }
-    .header-top { display: flex; align-items: center; justify-content: space-between; margin-bottom: 0.6rem; }
-    .header h1 { font-size: 20px; font-weight: 700; display: flex; align-items: center; gap: 8px; color: var(--text-primary); }
-    .header-actions { display: flex; align-items: center; gap: 10px; }
-    .progress-label { font-size: 13px; color: var(--text-secondary); background: var(--bg-screen); padding: 3px 10px; border-radius: 20px; font-variant-numeric: tabular-nums; }
-    .progress-track { height: 5px; background: var(--border); border-radius: 3px; overflow: hidden; }
-    .progress-fill { height: 100%; background: var(--accent); border-radius: 3px; transition: width 0.35s ease; width: 0%; }
+    /* Header */
+    .header { position: sticky; top: 0; z-index: 10; background: var(--header); border-bottom: 1px solid var(--border); padding: .85rem 1.25rem .65rem; transition: background .25s; }
+    .header-top { display: flex; align-items: center; justify-content: space-between; margin-bottom: .6rem; }
+    .header h1 { font-size: 20px; font-weight: 700; }
+    .header-right { display: flex; align-items: center; gap: 10px; }
+    .prog-label { font-size: 13px; color: var(--t2); background: var(--bg); padding: 3px 10px; border-radius: 20px; font-variant-numeric: tabular-nums; }
+    .prog-track { height: 5px; background: var(--border); border-radius: 3px; overflow: hidden; }
+    .prog-fill  { height: 100%; background: var(--green); border-radius: 3px; transition: width .35s; width: 0%; }
+    .btn-dark { background: var(--input); border: 1px solid var(--bdinput); border-radius: 50%; width: 32px; height: 32px; font-size: 16px; cursor: pointer; display: flex; align-items: center; justify-content: center; }
 
-    /* ── Dark mode toggle ── */
-    .dark-toggle { background: var(--bg-input); border: 1px solid var(--border-input); border-radius: 50%; width: 32px; height: 32px; font-size: 16px; cursor: pointer; display: flex; align-items: center; justify-content: center; transition: background 0.2s; }
-    .dark-toggle:hover { background: var(--border); }
+    /* Sync */
+    .sync-bar { display: flex; align-items: center; gap: 6px; font-size: 12px; color: var(--t3); padding: .4rem 1.25rem 0; }
+    .sync-dot { width: 7px; height: 7px; border-radius: 50%; background: var(--t3); flex-shrink: 0; transition: background .3s; }
+    .sync-dot.on  { background: var(--green); }
+    .sync-dot.err { background: #e24b4a; }
 
-    /* ── Sync ── */
-    .sync-bar { display: flex; align-items: center; gap: 6px; font-size: 12px; color: var(--text-tertiary); padding: 0.4rem 1.25rem 0; }
-    .sync-dot { width: 7px; height: 7px; border-radius: 50%; background: var(--text-tertiary); flex-shrink: 0; transition: background 0.3s; }
-    .sync-dot.connected { background: var(--accent); }
-    .sync-dot.error     { background: #e24b4a; }
-
-    /* ── Done banner ── */
-    .done-banner { display: none; margin: 1rem 1.25rem 0; padding: 12px 16px; background: #E1F5EE; color: #085041; border-radius: var(--radius-card); font-size: 14px; text-align: center; font-weight: 500; }
+    /* Banner */
+    .done-banner { display: none; margin: 1rem 1.25rem 0; padding: 12px 16px; background: #E1F5EE; color: #085041; border-radius: var(--r); font-size: 14px; text-align: center; font-weight: 500; }
     .dark .done-banner { background: #0a3d2e; color: #6ee7b7; }
 
-    /* ── Loading ── */
-    .loading { text-align: center; padding: 3rem 1rem; color: var(--text-tertiary); font-size: 15px; }
-    .spinner { width: 28px; height: 28px; border: 3px solid var(--border); border-top-color: var(--accent); border-radius: 50%; animation: spin 0.8s linear infinite; margin: 0 auto 1rem; }
+    /* Loading */
+    .loading { text-align: center; padding: 3rem 1rem; color: var(--t3); font-size: 15px; }
+    .spinner { width: 28px; height: 28px; border: 3px solid var(--border); border-top-color: var(--green); border-radius: 50%; animation: spin .8s linear infinite; margin: 0 auto 1rem; }
     @keyframes spin { to { transform: rotate(360deg); } }
 
-    /* ── Category ── */
+    /* Category */
     .category { margin-top: 1.1rem; padding: 0 1rem; }
-    .cat-header { display: flex; align-items: center; gap: 8px; padding: 6px 12px; border-radius: 10px; margin-bottom: 8px; }
-    .cat-icon  { font-size: 16px; line-height: 1; }
-    .cat-label { font-size: 11px; font-weight: 800; letter-spacing: 0.06em; text-transform: uppercase; }
+    .cat-head { display: flex; align-items: center; gap: 8px; padding: 5px 12px; border-radius: 10px; margin-bottom: 8px; }
+    .cat-icon  { font-size: 15px; }
+    .cat-name  { font-size: 11px; font-weight: 800; letter-spacing: .06em; text-transform: uppercase; }
 
-    /* Category colour themes — light */
-    .cat--פירות-וירקות          { background:#E8F5E9; } .cat--פירות-וירקות          .cat-label { color:#2E7D32; }
-    .cat--מוצרי-חלב             { background:#E3F2FD; } .cat--מוצרי-חלב             .cat-label { color:#1565C0; }
-    .cat--ביצים                  { background:#FFF9E6; } .cat--ביצים                  .cat-label { color:#F57F17; }
-    .cat--בשר-עוף-ודגים         { background:#FFEBEE; } .cat--בשר-עוף-ודגים         .cat-label { color:#B71C1C; }
-    .cat--לחם-ומאפים             { background:#FFF3E0; } .cat--לחם-ומאפים             .cat-label { color:#E65100; }
-    .cat--קפואים                 { background:#E0F7FA; } .cat--קפואים                 .cat-label { color:#006064; }
-    .cat--מוצרי-יסוד-ושימורים   { background:#EFEBE9; } .cat--מוצרי-יסוד-ושימורים   .cat-label { color:#4E342E; }
-    .cat--חטיפים-וממתקים         { background:#FCE4EC; } .cat--חטיפים-וממתקים         .cat-label { color:#880E4F; }
-    .cat--משקאות                 { background:#F3E5F5; } .cat--משקאות                 .cat-label { color:#4A148C; }
-    .cat--ניקיון-הבית            { background:#ECEFF1; } .cat--ניקיון-הבית            .cat-label { color:#263238; }
-    .cat--פארם-וטואלטיקה         { background:#E0F2F1; } .cat--פארם-וטואלטיקה         .cat-label { color:#004D40; }
-    .cat--תינוקות                { background:#FCE4EC; } .cat--תינוקות                .cat-label { color:#880E4F; }
-    .cat--חיות-מחמד              { background:#F1F8E9; } .cat--חיות-מחמד              .cat-label { color:#33691E; }
-    .cat--שונות                  { background:#F5F5F5; } .cat--שונות                  .cat-label { color:#616161; }
+    /* Cat colors */
+    .c0{background:#E8F5E9}.c0 .cat-name{color:#2E7D32}
+    .c1{background:#E3F2FD}.c1 .cat-name{color:#1565C0}
+    .c2{background:#FFF9E6}.c2 .cat-name{color:#F57F17}
+    .c3{background:#FFEBEE}.c3 .cat-name{color:#B71C1C}
+    .c4{background:#FFF3E0}.c4 .cat-name{color:#E65100}
+    .c5{background:#E0F7FA}.c5 .cat-name{color:#006064}
+    .c6{background:#EFEBE9}.c6 .cat-name{color:#4E342E}
+    .c7{background:#FCE4EC}.c7 .cat-name{color:#880E4F}
+    .c8{background:#F3E5F5}.c8 .cat-name{color:#4A148C}
+    .c9{background:#ECEFF1}.c9 .cat-name{color:#263238}
+    .c10{background:#E0F2F1}.c10 .cat-name{color:#004D40}
+    .c11{background:#FCE4EC}.c11 .cat-name{color:#880E4F}
+    .c12{background:#F1F8E9}.c12 .cat-name{color:#33691E}
+    .c99{background:#F5F5F5}.c99 .cat-name{color:#616161}
 
-    /* Dark mode category overrides */
-    .dark .cat--פירות-וירקות         { background:#1B2E1C; } .dark .cat--פירות-וירקות         .cat-label { color:#81C784; }
-    .dark .cat--מוצרי-חלב            { background:#0D2137; } .dark .cat--מוצרי-חלב            .cat-label { color:#64B5F6; }
-    .dark .cat--ביצים                 { background:#2A2010; } .dark .cat--ביצים                 .cat-label { color:#FFD54F; }
-    .dark .cat--בשר-עוף-ודגים        { background:#2D1215; } .dark .cat--בשר-עוף-ודגים        .cat-label { color:#EF9A9A; }
-    .dark .cat--לחם-ומאפים            { background:#2A1D0C; } .dark .cat--לחם-ומאפים            .cat-label { color:#FFCC80; }
-    .dark .cat--קפואים                { background:#09282B; } .dark .cat--קפואים                .cat-label { color:#80DEEA; }
-    .dark .cat--מוצרי-יסוד-ושימורים  { background:#1E1713; } .dark .cat--מוצרי-יסוד-ושימורים  .cat-label { color:#BCAAA4; }
-    .dark .cat--חטיפים-וממתקים        { background:#2B0E1C; } .dark .cat--חטיפים-וממתקים        .cat-label { color:#F48FB1; }
-    .dark .cat--משקאות                { background:#1E0F2B; } .dark .cat--משקאות                .cat-label { color:#CE93D8; }
-    .dark .cat--ניקיון-הבית           { background:#161C1F; } .dark .cat--ניקיון-הבית           .cat-label { color:#90A4AE; }
-    .dark .cat--פארם-וטואלטיקה        { background:#0A2420; } .dark .cat--פארם-וטואלטיקה        .cat-label { color:#80CBC4; }
-    .dark .cat--תינוקות               { background:#2B0E1C; } .dark .cat--תינוקות               .cat-label { color:#F48FB1; }
-    .dark .cat--חיות-מחמד             { background:#182210; } .dark .cat--חיות-מחמד             .cat-label { color:#AED581; }
-    .dark .cat--שונות                 { background:#1E1E1E; } .dark .cat--שונות                 .cat-label { color:#9E9E9E; }
+    .dark .c0{background:#1B2E1C}.dark .c0 .cat-name{color:#81C784}
+    .dark .c1{background:#0D2137}.dark .c1 .cat-name{color:#64B5F6}
+    .dark .c2{background:#2A2010}.dark .c2 .cat-name{color:#FFD54F}
+    .dark .c3{background:#2D1215}.dark .c3 .cat-name{color:#EF9A9A}
+    .dark .c4{background:#2A1D0C}.dark .c4 .cat-name{color:#FFCC80}
+    .dark .c5{background:#09282B}.dark .c5 .cat-name{color:#80DEEA}
+    .dark .c6{background:#1E1713}.dark .c6 .cat-name{color:#BCAAA4}
+    .dark .c7{background:#2B0E1C}.dark .c7 .cat-name{color:#F48FB1}
+    .dark .c8{background:#1E0F2B}.dark .c8 .cat-name{color:#CE93D8}
+    .dark .c9{background:#161C1F}.dark .c9 .cat-name{color:#90A4AE}
+    .dark .c10{background:#0A2420}.dark .c10 .cat-name{color:#80CBC4}
+    .dark .c11{background:#2B0E1C}.dark .c11 .cat-name{color:#F48FB1}
+    .dark .c12{background:#182210}.dark .c12 .cat-name{color:#AED581}
+    .dark .c99{background:#1E1E1E}.dark .c99 .cat-name{color:#9E9E9E}
 
-    /* ── Item ── */
-    .item { display: flex; align-items: center; gap: 10px; padding: 11px 13px; background: var(--bg-card); border: 1px solid var(--border); border-radius: var(--radius-card); margin-bottom: 7px; box-shadow: var(--shadow); -webkit-tap-highlight-color: transparent; transition: opacity 0.2s, background 0.25s; }
-    .item:active { opacity: 0.85; }
-    .item.done { opacity: 0.4; }
-    .item.done .item-name { text-decoration: line-through; color: var(--text-secondary); }
-
-    .cb { width: 26px; height: 26px; border-radius: 50%; border: 2px solid var(--border-input); display: flex; align-items: center; justify-content: center; flex-shrink: 0; transition: background 0.15s, border-color 0.15s; cursor: pointer; }
-    .item.done .cb { background: var(--accent); border-color: var(--accent); }
+    /* Item */
+    .item { display: flex; align-items: center; gap: 10px; padding: 11px 13px; background: var(--card); border: 1px solid var(--border); border-radius: var(--r); margin-bottom: 7px; box-shadow: var(--shadow); transition: background .25s; -webkit-tap-highlight-color: transparent; }
+    .item.done { opacity: .4; }
+    .item.done .iname { text-decoration: line-through; color: var(--t2); }
+    .cb { width: 26px; height: 26px; border-radius: 50%; border: 2px solid var(--bdinput); display: flex; align-items: center; justify-content: center; flex-shrink: 0; cursor: pointer; transition: background .15s, border-color .15s; }
+    .item.done .cb { background: var(--green); border-color: var(--green); }
     .cb svg { display: none; width: 13px; height: 13px; stroke: #fff; stroke-width: 2.5; fill: none; stroke-linecap: round; stroke-linejoin: round; }
     .item.done .cb svg { display: block; }
+    .iname { flex: 1; font-size: 15px; font-weight: 500; cursor: pointer; }
+    .qty-wrap { display: flex; align-items: center; gap: 6px; flex-shrink: 0; }
+    .qbtn { width: 28px; height: 28px; border-radius: 50%; border: 1.5px solid var(--bdinput); background: var(--input); font-size: 18px; cursor: pointer; display: flex; align-items: center; justify-content: center; color: var(--t2); }
+    .qbtn:hover { background: var(--border); }
+    .qnum { font-size: 15px; font-weight: 600; min-width: 20px; text-align: center; }
+    .del { background: none; border: none; cursor: pointer; color: var(--bdinput); font-size: 20px; padding: 2px 4px; border-radius: 4px; flex-shrink: 0; }
+    .del:hover { color: #e24b4a; background: #fdf0f0; }
 
-    .item-name { flex: 1; font-size: 15px; cursor: pointer; font-weight: 500; color: var(--text-primary); }
-    .qty-controls { display: flex; align-items: center; gap: 6px; flex-shrink: 0; }
-    .qty-btn { width: 28px; height: 28px; border-radius: 50%; border: 1.5px solid var(--border-input); background: var(--bg-input); font-size: 18px; cursor: pointer; display: flex; align-items: center; justify-content: center; color: var(--text-secondary); transition: background 0.12s; }
-    .qty-btn:hover { background: var(--border); }
-    .qty-num { font-size: 15px; font-weight: 600; min-width: 20px; text-align: center; color: var(--text-primary); }
-    .item-del { background: none; border: none; cursor: pointer; color: var(--border-input); font-size: 20px; padding: 2px 4px; border-radius: 4px; flex-shrink: 0; }
-    .item-del:hover { color: #e24b4a; background: #fdf0f0; }
-
-    /* ── FAB ── */
-    .fab { position: fixed; bottom: 88px; left: 50%; transform: translateX(-50%); width: 56px; height: 56px; border-radius: 50%; background: var(--accent); color: #fff; border: none; font-size: 28px; cursor: pointer; box-shadow: 0 4px 16px rgba(29,158,117,0.45); display: flex; align-items: center; justify-content: center; transition: transform 0.15s, box-shadow 0.15s; z-index: 20; }
-    .fab:active { transform: translateX(-50%) scale(0.92); box-shadow: 0 2px 8px rgba(29,158,117,0.3); }
-
-    /* ── Add bottom bar ── */
-    .add-section { position: fixed; bottom: 0; right: 0; left: 0; background: var(--bg-header); border-top: 1px solid var(--border); padding: 0.6rem 1rem; max-width: 480px; margin: 0 auto; transition: background 0.25s; }
-    .add-row { display: flex; gap: 8px; align-items: center; }
-    .add-name { flex: 1; padding: 10px 13px; border: 1px solid var(--border-input); border-radius: var(--radius-btn); font-size: 15px; background: var(--bg-input); color: var(--text-primary); outline: none; min-width: 0; transition: background 0.25s, border-color 0.2s; }
-    .add-name:focus { border-color: var(--accent); background: var(--bg-card); }
-    .add-qty-wrap { display: flex; align-items: center; gap: 5px; flex-shrink: 0; }
-    .add-qty-btn { width: 30px; height: 30px; border-radius: 50%; border: 1.5px solid var(--border-input); background: var(--bg-input); font-size: 18px; cursor: pointer; display: flex; align-items: center; justify-content: center; color: var(--text-secondary); }
-    .add-qty-btn:hover { background: var(--border); }
-    .add-qty-num { font-size: 15px; font-weight: 600; min-width: 22px; text-align: center; color: var(--text-primary); }
-    .btn-add { padding: 10px 15px; background: var(--accent); color: #fff; border: none; border-radius: var(--radius-btn); font-size: 15px; font-weight: 500; cursor: pointer; white-space: nowrap; }
-    .btn-add:hover { background: var(--accent-dark); }
-    .btn-reset { padding: 10px 12px; background: none; border: 1px solid var(--border-input); border-radius: var(--radius-btn); font-size: 13px; color: var(--text-secondary); cursor: pointer; white-space: nowrap; }
-    .btn-reset:hover { background: var(--bg-input); }
-
-    .ai-hint { font-size: 12px; color: var(--accent); padding: 3px 0 1px; min-height: 18px; font-weight: 500; }
-    .empty { text-align: center; padding: 3rem 1rem; color: var(--text-tertiary); font-size: 15px; }
-
-    /* ── Toast ── */
-    .toast { position: fixed; top: 80px; left: 50%; transform: translateX(-50%) translateY(-10px); background: #333; color: #fff; padding: 8px 18px; border-radius: 20px; font-size: 13px; opacity: 0; transition: opacity 0.2s, transform 0.2s; pointer-events: none; z-index: 100; white-space: nowrap; }
+    /* Bottom bar */
+    .bar { position: fixed; bottom: 0; right: 0; left: 0; background: var(--header); border-top: 1px solid var(--border); padding: .6rem 1rem; max-width: 480px; margin: 0 auto; transition: background .25s; }
+    .bar-row { display: flex; gap: 8px; align-items: center; }
+    .inp { flex: 1; padding: 10px 13px; border: 1px solid var(--bdinput); border-radius: 10px; font-size: 15px; background: var(--input); color: var(--t1); outline: none; min-width: 0; transition: background .25s; }
+    .inp:focus { border-color: var(--green); background: var(--card); }
+    .qwrap { display: flex; align-items: center; gap: 5px; flex-shrink: 0; }
+    .aqbtn { width: 30px; height: 30px; border-radius: 50%; border: 1.5px solid var(--bdinput); background: var(--input); font-size: 18px; cursor: pointer; display: flex; align-items: center; justify-content: center; color: var(--t2); }
+    .aqbtn:hover { background: var(--border); }
+    .aqnum { font-size: 15px; font-weight: 600; min-width: 22px; text-align: center; }
+    .btn-add   { padding: 10px 15px; background: var(--green); color: #fff; border: none; border-radius: 10px; font-size: 15px; font-weight: 500; cursor: pointer; white-space: nowrap; }
+    .btn-add:hover { background: var(--green2); }
+    .btn-reset { padding: 10px 12px; background: none; border: 1px solid var(--bdinput); border-radius: 10px; font-size: 13px; color: var(--t2); cursor: pointer; white-space: nowrap; }
+    .hint { font-size: 12px; color: var(--green); padding: 3px 0 1px; min-height: 18px; font-weight: 500; }
+    .empty { text-align: center; padding: 3rem 1rem; color: var(--t3); font-size: 15px; }
+    .toast { position: fixed; top: 80px; left: 50%; transform: translateX(-50%) translateY(-10px); background: #333; color: #fff; padding: 8px 18px; border-radius: 20px; font-size: 13px; opacity: 0; transition: opacity .2s, transform .2s; pointer-events: none; z-index: 100; white-space: nowrap; }
     .toast.show { opacity: 1; transform: translateX(-50%) translateY(0); }
-    .dark .toast { background: #e6e6e6; color: #111; }
   </style>
 </head>
 <body>
@@ -158,418 +139,304 @@ CTYPE html>
   <header class="header">
     <div class="header-top">
       <h1>🛒 רשימת קניות</h1>
-      <div class="header-actions">
-        <span class="progress-label" id="prog-label">0 / 0</span>
-        <button class="dark-toggle" id="dark-toggle" title="מצב כהה/בהיר">🌙</button>
+      <div class="header-right">
+        <span class="prog-label" id="prog-label">0 / 0</span>
+        <button class="btn-dark" id="btn-dark">🌙</button>
       </div>
     </div>
-    <div class="progress-track"><div class="progress-fill" id="prog-fill"></div></div>
+    <div class="prog-track"><div class="prog-fill" id="prog-fill"></div></div>
   </header>
   <div class="sync-bar">
     <div class="sync-dot" id="sync-dot"></div>
-    <span id="sync-label">מתחבר...</span>
+    <span id="sync-txt">מתחבר...</span>
   </div>
   <div class="done-banner" id="done-banner">🎉 כל המוצרים נאספו! קנייה מוצלחת!</div>
-  <main id="list-root"><div class="loading"><div class="spinner"></div>טוען רשימה...</div></main>
+  <main id="root"><div class="loading"><div class="spinner"></div>טוען רשימה...</div></main>
 </div>
 
-<div class="add-section">
-  <div class="add-row">
-    <input type="text" id="new-item-input" class="add-name" placeholder="הוסף מוצר..." autocomplete="off" />
-    <div class="add-qty-wrap">
-      <button class="add-qty-btn" id="add-qty-minus">−</button>
-      <span class="add-qty-num" id="add-qty-num">1</span>
-      <button class="add-qty-btn" id="add-qty-plus">+</button>
+<div class="bar">
+  <div class="bar-row">
+    <input class="inp" id="inp" type="text" placeholder="הוסף מוצר..." autocomplete="off" />
+    <div class="qwrap">
+      <button class="aqbtn" id="qminus">−</button>
+      <span class="aqnum" id="qnum">1</span>
+      <button class="aqbtn" id="qplus">+</button>
     </div>
     <button class="btn-add" id="btn-add">הוסף</button>
     <button class="btn-reset" id="btn-reset">אפס</button>
   </div>
-  <div class="ai-hint" id="ai-hint"></div>
+  <div class="hint" id="hint"></div>
 </div>
-
 <div class="toast" id="toast"></div>
 
 <script type="module">
-  import { initializeApp } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-app.js";
-  import { getDatabase, ref, onValue, set, update, remove, get }
-    from "https://www.gstatic.com/firebasejs/10.12.0/firebase-database.js";
+import { initializeApp } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-app.js";
+import { getDatabase, ref, onValue, set, update, remove, get }
+  from "https://www.gstatic.com/firebasejs/10.12.0/firebase-database.js";
 
-  const firebaseConfig = {
-    apiKey: "AIzaSyBIkJqv-zxchVNIBKJ9ofMdxlbn8sMz3Do",
-    authDomain: "grocery-list-a7281.firebaseapp.com",
-    databaseURL: "https://grocery-list-a7281-default-rtdb.firebaseio.com",
-    projectId: "grocery-list-a7281",
-    storageBucket: "grocery-list-a7281.firebasestorage.app",
-    messagingSenderId: "843518553895",
-    appId: "1:843518553895:web:776c1b03d336682f414302"
-  };
+const FB = {
+  apiKey: "AIzaSyBIkJqv-zxchVNIBKJ9ofMdxlbn8sMz3Do",
+  authDomain: "grocery-list-a7281.firebaseapp.com",
+  databaseURL: "https://grocery-list-a7281-default-rtdb.firebaseio.com",
+  projectId: "grocery-list-a7281",
+  storageBucket: "grocery-list-a7281.firebasestorage.app",
+  messagingSenderId: "843518553895",
+  appId: "1:843518553895:web:776c1b03d336682f414302"
+};
 
-  const DEFAULT_ITEMS = [
-    { id: "item1", name: "נייר טואלט",       qty: 1, cat: "ניקיון הבית",  done: false },
-    { id: "item2", name: "מלפפונים",          qty: 6, cat: "פירות וירקות", done: false },
-    { id: "item3", name: "פלפל אדום",         qty: 3, cat: "פירות וירקות", done: false },
-    { id: "item4", name: "פלפל כתום / צהוב", qty: 3, cat: "פירות וירקות", done: false },
-    { id: "item5", name: "עגבניות",           qty: 3, cat: "פירות וירקות", done: false },
-    { id: "item6", name: "נקטרינות",          qty: 2, cat: "פירות וירקות", done: false },
-    { id: "item7", name: "בננות",             qty: 4, cat: "פירות וירקות", done: false },
-    { id: "item8", name: "יוגורט פרו תות",   qty: 4, cat: "מוצרי חלב",   done: false },
-  ];
+const app = initializeApp(FB);
+const db  = getDatabase(app);
+const iRef = ref(db, "grocery/items");
+const initRef = ref(db, "grocery/initialized");
 
-  // ══════════════════════════════════════════
-  //  SMART CATEGORIZATION ENGINE
-  //  1. SINGULAR_MAP  – חריגים יחיד/רבים
-  //  2. normalizeSuffix – כללי סיומות
-  //  3. levenshtein – מרחק עריכה
-  //  4. generatePhoneticVariants – וריאציות צליל
-  //  5. correctWord – תיקון שגיאות + צליל
-  //  6. detectCategory – זיהוי + הקשר
-  // ══════════════════════════════════════════
+// ── Category meta ──
+const CATS = [
+  { name:"פירות וירקות",        icon:"🥦", ci:0  },
+  { name:"מוצרי חלב",           icon:"🥛", ci:1  },
+  { name:"ביצים",               icon:"🥚", ci:2  },
+  { name:"בשר, עוף ודגים",     icon:"🍗", ci:3  },
+  { name:"לחם ומאפים",          icon:"🍞", ci:4  },
+  { name:"קפואים",              icon:"❄️",  ci:5  },
+  { name:"מוצרי יסוד ושימורים",icon:"🥫", ci:6  },
+  { name:"חטיפים וממתקים",      icon:"🍬", ci:7  },
+  { name:"משקאות",              icon:"🥤", ci:8  },
+  { name:"ניקיון הבית",         icon:"🧽", ci:9  },
+  { name:"פארם וטואלטיקה",      icon:"🧴", ci:10 },
+  { name:"תינוקות",             icon:"👶", ci:11 },
+  { name:"חיות מחמד",           icon:"🐾", ci:12 },
+  { name:"שונות",               icon:"📦", ci:99 },
+];
+const CAT_ORDER = CATS.map(c => c.name);
+const CAT_MAP   = Object.fromEntries(CATS.map(c => [c.name, c]));
 
-  const SINGULAR_MAP = {
-    "בננות":"בננה","עגבניות":"עגבניה","מלפפונים":"מלפפון","פלפלים":"פלפל",
-    "בצלים":"בצל","גזרים":"גזר","קישואים":"קישוא","חצילים":"חציל",
-    "תפוחי אדמה":"תפוח אדמה","בטטות":"בטטה","פטריות":"פטריה",
-    "יוגורטים":"יוגורט","שוקולדים":"שוקולד","פסטות":"פסטה",
-    "קלמנטינות":"קלמנטינה","מנדרינות":"מנדרינה","אשכוליות":"אשכולית",
-    "לימונים":"לימון","ענבים":"ענב","תותים":"תות","שזיפים":"שזיף",
-    "אפרסקים":"אפרסק","נקטרינות":"נקטרינה","תפוחים":"תפוח","תפוזים":"תפוז",
-    "אגסים":"אגס","אבטיחים":"אבטיח","מלונים":"מלון","מנגואים":"מנגו",
-    "קיווים":"קיווי","אננסים":"אננס","משמשים":"משמש","רימונים":"רימון",
-    "תמרים":"תמר","דובדבנים":"דובדבן","תפוחי עץ":"תפוח","אבוקדואים":"אבוקדו",
-    "צנוניות":"צנון","חסות":"חסה","שומים":"שום","כרובים":"כרוב",
-    "לחמניות":"לחמניה","פיתות":"פיתה","עוגיות":"עוגיה","נקניקיות":"נקניקיה",
-    "חיתולים":"חיתול","מגבונים":"מגבון","פלסטרים":"פלסטר",
-    "אגוזים":"אגוז","שקדים":"שקד","גרעינים":"גרעין"
-  };
+// ── Categorization ──
+const SINGULAR_MAP = {
+  "בננות":"בננה","עגבניות":"עגבניה","מלפפונים":"מלפפון","פלפלים":"פלפל",
+  "בצלים":"בצל","גזרים":"גזר","קישואים":"קישוא","חצילים":"חציל",
+  "תפוחי אדמה":"תפוח אדמה","בטטות":"בטטה","פטריות":"פטריה",
+  "יוגורטים":"יוגורט","שוקולדים":"שוקולד","פסטות":"פסטה",
+  "לימונים":"לימון","ענבים":"ענב","תותים":"תות","תפוחים":"תפוח",
+  "תפוזים":"תפוז","אגסים":"אגס","נקטרינות":"נקטרינה","אבטיחים":"אבטיח"
+};
+const CAT_RULES = [
+  { name:"פירות וירקות", kw:["תפוח","תפוז","בננה","ענב","אגס","מנגו","אבטיח","מלון","תות","אפרסק","נקטרינה","שזיף","לימון","אשכולית","קיווי","רימון","תמר","אננס","משמש","עגבניה","עגבניות","מלפפון","פלפל","חסה","גזר","בצל","שום","תפוח אדמה","בטטה","קישוא","חציל","ברוקולי","כרובית","כרוב","תירס","אפונה","פטריה","אבוקדו","דלורית","דלעת","כרישה","פטרוזיליה","כוסברה","נענע","תרד","ג'ינג'ר","שמיר","עירית","צנון"] },
+  { name:"מוצרי חלב",   kw:["חלב","יוגורט","גבינה","קוטג","שמנת","חמאה","מרגרינה","לאבנה","מוצרלה","פרמזן","ריקוטה","קפיר","מילקי","מעדן","דנונה"] },
+  { name:"ביצים",        kw:["ביצה","ביצים","תבנית ביצים","ביצי חופש"] },
+  { name:"בשר, עוף ודגים", kw:["עוף","חזה עוף","ירך עוף","כנפיים","פרגית","בשר","בקר","טחון","סטייק","קבב","המבורגר","כבש","נקניק","נקניקיה","פסטרמה","דג","סלמון","טונה","דניס","לברק","שרימפס","קלמרי"] },
+  { name:"לחם ומאפים",  kw:["לחם","פיתה","בגט","חלה","לחמניה","עוגה","עוגיות","קרקר","מצה","טוסט","בורקס","רוגלך","מאפה","בייגלה"] },
+  { name:"קפואים",       kw:["גלידה","ארטיק","קפוא","קפואים","פיצה קפואה","שניצל קפוא","ירקות קפואים","אדממה"] },
+  { name:"מוצרי יסוד ושימורים", kw:["פסטה","ספגטי","אורז","קמח","סוכר","מלח","שמן","טחינה","חומוס","ריבה","דבש","מיונז","קטשופ","רוטב","שימורים","עדשים","קינואה","שיבולת שועל","גרנולה","דגני בוקר","אגוזים","שקדים","תבלין","אבקת מרק","זיתים","חמוצים"] },
+  { name:"חטיפים וממתקים", kw:["במבה","ביסלי","צ'יפס","חטיף","שוקולד","סוכריות","מרשמלו","וופלים","פופקורן","ממתק"] },
+  { name:"משקאות",       kw:["מים","מיץ","קולה","סודה","בירה","יין","קפה","תה","שוקו","משקה","רד בול","נספרסו"] },
+  { name:"ניקיון הבית",  kw:["נייר טואלט","מגבות נייר","טישו","סבון כלים","אקונומיקה","אבקת כביסה","נוזל כביסה","שקיות זבל","מגב","ספוג","כפפות","ניקוי"] },
+  { name:"פארם וטואלטיקה", kw:["שמפו","סבון גוף","דאודורנט","משחת שיניים","מברשת שיניים","קרם","ויטמינים","אקמול","נורופן","פלסטרים","מד חום"] },
+  { name:"תינוקות",      kw:["חיתולים","מגבונים לתינוק","מטרנה","סימילאק"] },
+  { name:"חיות מחמד",    kw:["אוכל לכלבים","אוכל לחתולים","חול לחתולים"] },
+];
 
-  // 1. ניקוי
-  function cleanWord(w) {
-    return w.trim().replace(/[״׳"']/g, "").replace(/\s+/g, " ");
-  }
+function normWord(w) {
+  w = w.trim().replace(/[״׳"']/g,"");
+  if (SINGULAR_MAP[w]) return SINGULAR_MAP[w];
+  if (w.endsWith("ות")) return w.slice(0,-2)+"ה";
+  if (w.endsWith("ים")) return w.slice(0,-2);
+  return w;
+}
 
-  // 2. נרמול סיומות
-  function normalizeSuffix(word) {
-    if (SINGULAR_MAP[word]) return SINGULAR_MAP[word];
-    if (word.endsWith("ות")) return word.slice(0, -2) + "ה";
-    if (word.endsWith("ים")) return word.slice(0, -2);
-    return word;
-  }
-
-  // 3. Levenshtein
-  function levenshtein(a, b) {
-    if (Math.abs(a.length - b.length) > 3) return 99;
-    const m = [];
-    for (let i = 0; i <= a.length; i++) m[i] = [i];
-    for (let j = 0; j <= b.length; j++) m[0][j] = j;
-    for (let i = 1; i <= a.length; i++)
-      for (let j = 1; j <= b.length; j++) {
-        const cost = a[i-1] === b[j-1] ? 0 : 1;
-        m[i][j] = Math.min(m[i-1][j]+1, m[i][j-1]+1, m[i-1][j-1]+cost);
+function detectCat(name) {
+  const clean = name.trim();
+  const norm  = normWord(clean);
+  let best = { cat:"שונות", score:0 };
+  for (const rule of CAT_RULES) {
+    for (const kw of rule.kw) {
+      const nkw = normWord(kw);
+      if (clean===kw||clean===nkw) return rule.name;
+      if (clean.includes(kw)||clean.includes(nkw)||norm.includes(kw)||norm.includes(nkw)) {
+        if (kw.length > best.score) best = { cat:rule.name, score:kw.length };
       }
-    return m[a.length][b.length];
-  }
-
-  // 4. וריאציות פונטיות
-  const PHONETIC_GROUPS = [
-    ["ב","ו"],["ת","ט"],["ס","ש"],["ק","כ","ח"],["א","ה"],["צ","ס"],["פ","ב"]
-  ];
-  function generatePhoneticVariants(word) {
-    const variants = new Set([word]);
-    // הסרת אות כפולה: "מלפופון" → "מלפון"
-    variants.add(word.replace(/(.)\1+/g, "$1"));
-    // החלפות צליליות (רק החלפה ראשונה לכל קבוצה — לא להכביד)
-    for (const group of PHONETIC_GROUPS) {
-      for (const letter of group) {
-        if (word.includes(letter)) {
-          for (const alt of group) {
-            if (alt !== letter) variants.add(word.replace(letter, alt));
-          }
-        }
+      if ((kw.includes(clean)||nkw.includes(norm)) && clean.length>=3) {
+        if (clean.length > best.score) best = { cat:rule.name, score:clean.length };
       }
     }
-    return [...variants];
+  }
+  return best.cat;
+}
+
+// ── Dark mode ──
+const html = document.documentElement;
+const btnDark = document.getElementById("btn-dark");
+if (window.matchMedia("(prefers-color-scheme: dark)").matches) {
+  html.classList.add("dark"); btnDark.textContent="☀️";
+}
+btnDark.addEventListener("click", () => {
+  html.classList.toggle("dark");
+  btnDark.textContent = html.classList.contains("dark") ? "☀️" : "🌙";
+});
+
+// ── Toast ──
+function toast(msg) {
+  const t = document.getElementById("toast");
+  t.textContent = msg; t.classList.add("show");
+  setTimeout(() => t.classList.remove("show"), 2500);
+}
+
+// ── Sync status ──
+const dot = document.getElementById("sync-dot");
+const txt = document.getElementById("sync-txt");
+function setSync(ok) {
+  dot.className = "sync-dot " + (ok ? "on" : "err");
+  txt.textContent = ok ? "מסונכרן" : "בעיית חיבור";
+}
+
+// ── Seed default items once ──
+const DEFAULT = [
+  {id:"item1",name:"נייר טואלט",      qty:1,cat:"ניקיון הבית",  done:false},
+  {id:"item2",name:"מלפפונים",         qty:6,cat:"פירות וירקות",done:false},
+  {id:"item3",name:"פלפל אדום",        qty:3,cat:"פירות וירקות",done:false},
+  {id:"item4",name:"פלפל כתום / צהוב",qty:3,cat:"פירות וירקות",done:false},
+  {id:"item5",name:"עגבניות",          qty:3,cat:"פירות וירקות",done:false},
+  {id:"item6",name:"נקטרינות",         qty:2,cat:"פירות וירקות",done:false},
+  {id:"item7",name:"בננות",            qty:4,cat:"פירות וירקות",done:false},
+  {id:"item8",name:"יוגורט פרו תות",  qty:4,cat:"מוצרי חלב",  done:false},
+];
+get(initRef).then(s => {
+  if (!s.exists()) {
+    const seed = {};
+    DEFAULT.forEach(it => { seed[it.id] = it; });
+    set(iRef, seed);
+    set(initRef, true);
+  }
+});
+
+// ── State ──
+let current = [];
+
+// ── Render ──
+function render(items) {
+  const total = items.length;
+  const done  = items.filter(i=>i.done).length;
+  document.getElementById("prog-label").textContent = done+" / "+total;
+  document.getElementById("prog-fill").style.width = (total?Math.round(done/total*100):0)+"%";
+  document.getElementById("done-banner").style.display = (total>0&&done===total)?"block":"none";
+
+  const root = document.getElementById("root");
+  root.innerHTML = "";
+
+  if (total===0) {
+    root.innerHTML = '<div class="empty">הרשימה ריקה — הוסף מוצרים למטה</div>';
+    return;
   }
 
-  // 5. בניית מילון שטוח (lazy, once)
-  let _allKws = null;
-  function getAllKeywords() {
-    if (_allKws) return _allKws;
-    const s = new Set();
-    CAT_RULES.forEach(r => r.keywords.forEach(k => {
-      s.add(k);
-      s.add(normalizeSuffix(cleanWord(k)));
-    }));
-    _allKws = [...s];
-    return _allKws;
-  }
+  // Group by category
+  const groups = {};
+  [...items].sort((a,b)=>a.done===b.done?0:a.done?1:-1)
+    .forEach(it => { (groups[it.cat]||(groups[it.cat]=[])).push(it); });
 
-  // 6. תיקון מילה אחת (Levenshtein + פונטיקה)
-  function correctWord(word) {
-    const allKws = getAllKeywords();
-    const variants = generatePhoneticVariants(word);
-    let best = word, bestScore = 99;
-    for (const v of variants) {
-      for (const kw of allKws) {
-        const d = levenshtein(v, kw);
-        if (d < bestScore && d <= 2) { bestScore = d; best = kw; }
-      }
-    }
-    return best;
-  }
-
-  // 7. מילות תיאור (לא מוצרים)
-  const DESCRIPTORS = new Set([
-    "אדום","צהוב","ירוק","כתום","סגול","לבן","שחור","חום",
-    "שרי","תמר","רומית","בלאדי","טרי","קפוא","גדול","קטן",
-    "מלא","רזה","דל","עשיר","אורגני","טבעי","ביתי","מיובש",
-    "500","250","1","2","3","4","5","6","7","8","גרם","קג","ליטר","מ"
-  ]);
-
-  // 8. detectCategory — מלא עם הקשר
-  function detectCategory(itemName) {
-    const clean   = cleanWord(itemName);
-    const tokens  = clean.split(/\s+/).filter(Boolean);
-    let best = { cat: "שונות", score: 0 };
-
-    function scoreText(text) {
-      for (const rule of CAT_RULES) {
-        for (const kw of rule.keywords) {
-          const nkw = normalizeSuffix(cleanWord(kw));
-          if (text === kw || text === nkw) return rule.cat; // exact
-          if (text.includes(kw) || text.includes(nkw)) {
-            const sc = kw.length;
-            if (sc > best.score) best = { cat: rule.cat, score: sc };
-          }
-          if ((kw.includes(text) || nkw.includes(text)) && text.length >= 3) {
-            const sc = text.length;
-            if (sc > best.score) best = { cat: rule.cat, score: sc };
-          }
-        }
-      }
-      return null;
-    }
-
-    // Pass 1 — בדיקת המשפט המלא + גרסה מנורמלת
-    const norm = normalizeSuffix(clean);
-    if (scoreText(clean)) return scoreText(clean);
-    if (scoreText(norm))  return scoreText(norm);
-    if (best.cat !== "שונות") return best.cat;
-
-    // Pass 2 — לפי טוקן, עם תיקון שגיאות + פונטיקה
-    // מזהה מילת ליבה (לא תיאור)
-    const coreTokens = tokens.filter(t => !DESCRIPTORS.has(t));
-    const allTokens  = coreTokens.length ? coreTokens : tokens;
-
-    for (const token of allTokens) {
-      const normalized = normalizeSuffix(token);
-      for (const candidate of [token, normalized, correctWord(normalized)]) {
-        const r = scoreText(candidate);
-        if (r) return r;
-        if (best.cat !== "שונות") return best.cat;
-      }
-    }
-
-    return best.cat;
-  }
-
-    // ── Toast ──
-  function showToast(msg) {
-    const t = document.getElementById("toast");
-    t.textContent = msg;
-    t.classList.add("show");
-    setTimeout(() => t.classList.remove("show"), 2500);
-  }
-
-  const fbApp = initializeApp(firebaseConfig);
-  const db = getDatabase(fbApp);
-  const itemsRef = ref(db, "grocery/items");
-
-  const syncDot = document.getElementById("sync-dot");
-  const syncLabel = document.getElementById("sync-label");
-  function setConnected(ok) {
-    syncDot.className = "sync-dot " + (ok ? "connected" : "error");
-    syncLabel.textContent = ok ? "מסונכרן" : "בעיית חיבור";
-  }
-
-  // טוען רשימת ברירת מחדל רק בפעם הראשונה אי פעם (לפי דגל initialized)
-  const initializedRef = ref(db, "grocery/initialized");
-  get(initializedRef).then(snap => {
-    if (!snap.exists()) {
-      const seed = {};
-      DEFAULT_ITEMS.forEach(it => { seed[it.id] = it; });
-      set(itemsRef, seed);
-      set(initializedRef, true);
-    }
+  // Sort categories by CATS order
+  const keys = Object.keys(groups).sort((a,b) => {
+    const ai = CAT_ORDER.indexOf(a), bi = CAT_ORDER.indexOf(b);
+    return (ai<0?999:ai)-(bi<0?999:bi);
   });
 
-  // סדר קטגוריות לפי מיקום בסופר — שונות תמיד בסוף
-  const ORDERED_CATS = [...CAT_RULES.map(r => r.cat), "שונות"];
+  keys.forEach(catName => {
+    const meta = CAT_MAP[catName] || { icon:"📦", ci:99 };
+    const sec = document.createElement("section");
+    sec.className = "category";
 
-  // שמירת snapshot נוכחי לבדיקת כפילויות
-  let currentItems = [];
-  onValue(itemsRef, snap => {
-    setConnected(true);
-    currentItems = Object.values(snap.val() || {});
-    render(currentItems);
-  }, () => setConnected(false));
+    const head = document.createElement("div");
+    head.className = "cat-head c"+meta.ci;
+    head.innerHTML = '<span class="cat-icon">'+meta.icon+'</span><span class="cat-name">'+esc(catName)+'</span>';
+    sec.appendChild(head);
 
-  // ── Render ──
-  function render(items) {
-    const total = items.length;
-    const doneCount = items.filter(i => i.done).length;
-    document.getElementById("prog-label").textContent = doneCount + " / " + total;
-    document.getElementById("prog-fill").style.width = (total ? Math.round(doneCount/total*100) : 0) + "%";
-    document.getElementById("done-banner").style.display = (total > 0 && doneCount === total) ? "block" : "none";
+    groups[catName].forEach(it => {
+      const qty = Number(it.qty)||1;
+      const div = document.createElement("div");
+      div.className = "item"+(it.done?" done":"");
 
-    const root = document.getElementById("list-root");
-    root.innerHTML = "";
-    if (total === 0) { root.innerHTML = '<div class="empty">הרשימה ריקה — הוסף מוצרים למטה</div>'; return; }
+      div.innerHTML =
+        '<div class="cb"><svg viewBox="0 0 14 12"><polyline points="1,6 5,10 13,1"/></svg></div>'+
+        '<span class="iname">'+esc(it.name)+'</span>'+
+        '<div class="qty-wrap">'+
+          '<button class="qbtn" data-id="'+it.id+'" data-d="-1">−</button>'+
+          '<span class="qnum">'+qty+'</span>'+
+          '<button class="qbtn" data-id="'+it.id+'" data-d="1">+</button>'+
+        '</div>'+
+        '<button class="del" data-id="'+it.id+'">×</button>';
 
-    // קיבוץ לפי קטגוריה
-    const cats = {};
-    items.sort((a,b) => a.done === b.done ? 0 : a.done ? 1 : -1)
-         .forEach(it => { if (!cats[it.cat]) cats[it.cat]=[]; cats[it.cat].push(it); });
+      const toggle = () => update(ref(db,"grocery/items/"+it.id),{done:!it.done});
+      div.querySelector(".cb").addEventListener("click", toggle);
+      div.querySelector(".iname").addEventListener("click", toggle);
 
-    // מיון קטגוריות לפי סדר הסופר, שונות תמיד בסוף
-    const sortedCatKeys = Object.keys(cats)
-      .sort((a, b) => {
-        const ai = ORDERED_CATS.indexOf(a);
-        const bi = ORDERED_CATS.indexOf(b);
-        return (ai === -1 ? 999 : ai) - (bi === -1 ? 999 : bi);
+      div.querySelectorAll(".qbtn").forEach(b => b.addEventListener("click", e => {
+        e.stopPropagation();
+        update(ref(db,"grocery/items/"+it.id),{qty:Math.max(1,qty+Number(b.dataset.d))});
+      }));
+
+      div.querySelector(".del").addEventListener("click", e => {
+        e.stopPropagation();
+        remove(ref(db,"grocery/items/"+it.id));
       });
 
-    const CAT_META = {
-      "פירות וירקות":         { icon: "🥦", cls: "פירות-וירקות" },
-      "מוצרי חלב":            { icon: "🥛", cls: "מוצרי-חלב" },
-      "ביצים":                { icon: "🥚", cls: "ביצים" },
-      "בשר, עוף ודגים":       { icon: "🍗", cls: "בשר-עוף-ודגים" },
-      "לחם ומאפים":           { icon: "🍞", cls: "לחם-ומאפים" },
-      "קפואים":               { icon: "❄️",  cls: "קפואים" },
-      "מוצרי יסוד ושימורים": { icon: "🥫", cls: "מוצרי-יסוד-ושימורים" },
-      "חטיפים וממתקים":       { icon: "🍬", cls: "חטיפים-וממתקים" },
-      "משקאות":               { icon: "🥤", cls: "משקאות" },
-      "ניקיון הבית":          { icon: "🧽", cls: "ניקיון-הבית" },
-      "פארם וטואלטיקה":       { icon: "🧴", cls: "פארם-וטואלטיקה" },
-      "תינוקות":              { icon: "👶", cls: "תינוקות" },
-      "חיות מחמד":            { icon: "🐾", cls: "חיות-מחמד" },
-      "שונות":                { icon: "📦", cls: "שונות" },
-    };
-
-    sortedCatKeys.forEach(cat => {
-      const catItems = cats[cat];
-      const meta = CAT_META[cat] || { icon: "📦", cls: "שונות" };
-      const sec = document.createElement("section");
-      sec.className = "category";
-      sec.innerHTML = '<div class="cat-header cat--' + meta.cls + '">' +
-        '<span class="cat-icon">' + meta.icon + '</span>' +
-        '<span class="cat-label">' + esc(cat) + '</span>' +
-        '</div>';
-
-      catItems.forEach(it => {
-        const div = document.createElement("div");
-        div.className = "item" + (it.done ? " done" : "");
-        const qty = Number(it.qty) || 1;
-        div.innerHTML =
-          '<div class="cb"><svg viewBox="0 0 14 12"><polyline points="1,6 5,10 13,1"/></svg></div>' +
-          '<span class="item-name">' + esc(it.name) + '</span>' +
-          '<div class="qty-controls">' +
-            '<button class="qty-btn" data-action="minus">−</button>' +
-            '<span class="qty-num">' + qty + '</span>' +
-            '<button class="qty-btn" data-action="plus">+</button>' +
-          '</div>' +
-          '<button class="item-del">×</button>';
-
-        const toggleDone = () => update(ref(db, "grocery/items/" + it.id), { done: !it.done });
-        div.querySelector(".cb").addEventListener("click", toggleDone);
-        div.querySelector(".item-name").addEventListener("click", toggleDone);
-
-        div.querySelectorAll(".qty-btn").forEach(btn => {
-          btn.addEventListener("click", e => {
-            e.stopPropagation();
-            update(ref(db, "grocery/items/" + it.id), { qty: Math.max(1, qty + (btn.dataset.action === "plus" ? 1 : -1)) });
-          });
-        });
-
-        div.querySelector(".item-del").addEventListener("click", e => {
-          e.stopPropagation();
-          remove(ref(db, "grocery/items/" + it.id));
-        });
-
-        sec.appendChild(div);
-      });
-      root.appendChild(sec);
+      sec.appendChild(div);
     });
-  }
-
-  // ── Add item ──
-  let addQty = 1;
-  const addQtyNum = document.getElementById("add-qty-num");
-  const aiHint = document.getElementById("ai-hint");
-  let detectedCat = "שונות";
-
-  document.getElementById("add-qty-minus").addEventListener("click", () => { addQty = Math.max(1, addQty-1); addQtyNum.textContent = addQty; });
-  document.getElementById("add-qty-plus").addEventListener("click",  () => { addQty++; addQtyNum.textContent = addQty; });
-
-  document.getElementById("new-item-input").addEventListener("input", e => {
-    const val = e.target.value.trim();
-    if (val.length < 2) { aiHint.textContent = ""; detectedCat = "שונות"; return; }
-    detectedCat = detectCategory(val);
-    aiHint.textContent = detectedCat !== "שונות" ? "📂 " + detectedCat : "";
+    root.appendChild(sec);
   });
+}
 
-  function addItem() {
-    const inp = document.getElementById("new-item-input");
-    const val = inp.value.trim();
-    if (!val) return;
-    if (detectedCat === "שונות") detectedCat = detectCategory(val);
+// ── Firebase listener ──
+onValue(iRef, snap => {
+  setSync(true);
+  current = Object.values(snap.val()||{});
+  render(current);
+}, () => setSync(false));
 
-    // בדיקת כפילות — אם המוצר כבר קיים, פשוט מחברים כמות
-    const existing = currentItems.find(it => it.name.trim() === val);
-    if (existing) {
-      const newQty = (Number(existing.qty) || 1) + addQty;
-      update(ref(db, "grocery/items/" + existing.id), { qty: newQty, done: false });
-      showToast("✓ עדכון כמות: " + val + " → " + newQty);
-    } else {
-      const id = "item_" + Date.now();
-      set(ref(db, "grocery/items/" + id), { id, name: val, qty: addQty, cat: detectedCat, done: false });
-    }
+// ── Add item ──
+let addQty = 1;
+const qnum = document.getElementById("qnum");
+document.getElementById("qminus").addEventListener("click", ()=>{ addQty=Math.max(1,addQty-1); qnum.textContent=addQty; });
+document.getElementById("qplus").addEventListener("click",  ()=>{ addQty++; qnum.textContent=addQty; });
 
-    inp.value = "";
-    addQty = 1;
-    addQtyNum.textContent = "1";
-    aiHint.textContent = "";
-    detectedCat = "שונות";
-    // לא מחזירים focus — נוח יותר בטלפון
+const inpEl  = document.getElementById("inp");
+const hintEl = document.getElementById("hint");
+let detCat = "שונות";
+
+inpEl.addEventListener("input", e => {
+  const v = e.target.value.trim();
+  if (v.length<2) { hintEl.textContent=""; detCat="שונות"; return; }
+  detCat = detectCat(v);
+  hintEl.textContent = detCat!=="שונות" ? "📂 "+detCat : "";
+});
+
+function doAdd() {
+  const val = inpEl.value.trim();
+  if (!val) return;
+  if (detCat==="שונות") detCat = detectCat(val);
+
+  const dup = current.find(it => it.name.trim()===val);
+  if (dup) {
+    update(ref(db,"grocery/items/"+dup.id),{qty:(Number(dup.qty)||1)+addQty, done:false});
+    toast("✓ עדכון כמות: "+val);
+  } else {
+    const id = "item_"+Date.now();
+    set(ref(db,"grocery/items/"+id),{id,name:val,qty:addQty,cat:detCat,done:false});
   }
+  inpEl.value=""; addQty=1; qnum.textContent="1"; hintEl.textContent=""; detCat="שונות";
+}
 
-  document.getElementById("btn-add").addEventListener("click", addItem);
-  document.getElementById("new-item-input").addEventListener("keydown", e => { if (e.key === "Enter") addItem(); });
+document.getElementById("btn-add").addEventListener("click", doAdd);
+inpEl.addEventListener("keydown", e=>{ if(e.key==="Enter") doAdd(); });
 
-  document.getElementById("btn-reset").addEventListener("click", () => {
-    if (!confirm("לאפס את כל הסימונים?")) return;
-    get(itemsRef).then(snap => {
-      if (!snap.exists()) return;
-      const updates = {};
-      Object.keys(snap.val()).forEach(k => { updates[k + "/done"] = false; });
-      update(itemsRef, updates);
-    });
+// ── Reset ──
+document.getElementById("btn-reset").addEventListener("click", ()=>{
+  if (!confirm("לאפס את כל הסימונים?")) return;
+  get(iRef).then(s=>{
+    if (!s.exists()) return;
+    const upd={};
+    Object.keys(s.val()).forEach(k=>{ upd[k+"/done"]=false; });
+    update(iRef,upd);
   });
+});
 
-  function esc(s) { return String(s||"").replace(/&/g,"&amp;").replace(/</g,"&lt;").replace(/>/g,"&gt;"); }
-
-  // ── Dark mode ──
-  const darkToggle = document.getElementById("dark-toggle");
-  const html = document.documentElement;
-  // Respect system preference on first load
-  if (window.matchMedia("(prefers-color-scheme: dark)").matches) {
-    html.classList.add("dark");
-    darkToggle.textContent = "☀️";
-  }
-  darkToggle.addEventListener("click", () => {
-    html.classList.toggle("dark");
-    darkToggle.textContent = html.classList.contains("dark") ? "☀️" : "🌙";
-  });
-
+function esc(s){ return String(s||"").replace(/&/g,"&amp;").replace(/</g,"&lt;").replace(/>/g,"&gt;"); }
 </script>
 </body>
 </html>
